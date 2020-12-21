@@ -5,6 +5,7 @@ const route = express.Router();
 const userModel = require('../lib/models/user/users-model');
 const basicAuth = require('../middleware/basic');
 const productsCrud = require('../lib/models/product/product-collection');
+const cartsCrud = require('../lib/models/cart/cart-collection');
 
 
 
@@ -14,6 +15,17 @@ route.post('/signin',signIn);
 route.get('/users',allUsers);
 
 
+
+
+
+
+
+
+
+
+
+
+/***************************************************PRODUCT CRUD METHODS**************************************/
 
 
 route.post('/product',postProduct);
@@ -72,10 +84,76 @@ function deleteProduct(req, res,next){
   let id = req.params.id;
   productsCrud.delete(id)
     .then(() =>{
-      res.json({delete:`you delete the category has Id: ${id}`});
+      res.json({delete:`you delete the product has Id: ${id}`});
     })
     .catch(next);
 }
+/***************************************************CART CRUD METHODS**************************************/
+
+route.post('/cart',postCart);
+function postCart(req, res,next){
+  let data = req.body;
+  cartsCrud.create(data)
+    .then(productAdded=>{
+      res.json(productAdded);
+    })
+    .catch(next);
+}
+//find All categories (GET)
+route.get('/cart',getAllCarts);
+function getAllCarts(req, res,next){
+  cartsCrud.get()
+  
+    .then(allProducts =>{
+      res.json(allProducts);
+    })
+    .catch(next);
+    // .then(data => {
+    //   let output = {
+    //     Autherization:req.auth,
+    //     count: data.length,
+    //     results: data,
+    //   };
+    //   res.status(200).json(output);
+    // }).catch(next);
+}
+
+
+//find category By Id (GET)
+route.get('/cart/:id',getByIdCart);
+function getByIdCart(req, res,next){
+  let id = req.params.id;
+  cartsCrud.get(id)
+    .then(productId =>{
+      res.json(productId);
+    })
+    .catch(next);
+}
+//update specific catgeroy By Id (PUT)
+route.put('/cart/:id',updatedCartById);
+function updatedCartById(req, res,next){
+  let id = req.params.id;
+  let data = req.body;
+  cartsCrud.update(id,data)
+    .then(updatedProduct =>{
+      res.json(updatedProduct);
+    })
+    .catch(next);
+}
+// delete specific catgeroy By Id (DELETE)
+route.delete('/cart/:id',deleteCart);
+function deleteCart(req, res,next){
+  let id = req.params.id;
+  cartsCrud.delete(id)
+    .then(() =>{
+      res.json({delete:`you delete the cart has Id: ${id}`});
+    })
+    .catch(next);
+}
+
+
+
+/******************************************************************************************** */
   
 // route.get('/oauth',OAuthMiddleware,signInGitHub);
 // for signUp
