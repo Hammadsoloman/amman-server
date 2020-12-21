@@ -29,11 +29,22 @@ function postProduct(req, res,next){
 route.get('/product',getAllProducts);
 function getAllProducts(req, res,next){
   productsCrud.get()
-    .then(allProducts =>{
-      res.json(allProducts);
-    })
-    .catch(next);
+  
+    // .then(allProducts =>{
+    //   res.json(allProducts);
+    // })
+    // .catch(next);
+    .then(data => {
+      let output = {
+        Autherization:req.auth,
+        count: data.length,
+        results: data,
+      };
+      res.status(200).json(output);
+    }).catch(next);
 }
+
+
 //find category By Id (GET)
 route.get('/product/:id',getByIdProduct);
 function getByIdProduct(req, res,next){
@@ -60,7 +71,7 @@ route.delete('/product/:id',deleteProduct);
 function deleteProduct(req, res,next){
   let id = req.params.id;
   productsCrud.delete(id)
-    .then(result =>{
+    .then(() =>{
       res.json({delete:`you delete the category has Id: ${id}`});
     })
     .catch(next);
