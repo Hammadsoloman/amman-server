@@ -30,18 +30,18 @@ route.get('/product',getAllProducts);
 function getAllProducts(req, res,next){
   productsCrud.get()
   
-    // .then(allProducts =>{
-    //   res.json(allProducts);
-    // })
-    // .catch(next);
-    .then(data => {
-      let output = {
-        Autherization:req.auth,
-        count: data.length,
-        results: data,
-      };
-      res.status(200).json(output);
-    }).catch(next);
+    .then(allProducts =>{
+      res.json(allProducts);
+    })
+    .catch(next);
+    // .then(data => {
+    //   let output = {
+    //     Autherization:req.auth,
+    //     count: data.length,
+    //     results: data,
+    //   };
+    //   res.status(200).json(output);
+    // }).catch(next);
 }
 
 
