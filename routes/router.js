@@ -153,8 +153,29 @@ function deleteCart(req, res,next){
 
 
 
-/******************************************************************************************** */
+/***************************************** ADMIN ****************************************************/
+
+route.put('/select/:id', editOneProduct);
+  function editOneProduct(req, res,next)  {
+    productsCrud 
+      .update(req.params.id,req.body)
+      .then(data =>res.json(data))
+      .catch(err=>next(err.message));  
+  }
   
+  route.get('/selectAll', getAllProductAdmin);
+  function getAllProductAdmin(req, res, next) {
+    productsCrud
+      .get()
+      .then((data) => res.json(data))
+      .catch((err) => next(err.message));
+  }
+
+
+
+
+
+/*************************************************************************************************/
 // route.get('/oauth',OAuthMiddleware,signInGitHub);
 // for signUp
 function signUp(req,res,next){
