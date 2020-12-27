@@ -6,8 +6,8 @@ const userModel = require('../lib/models/user/users-model');
 const basicAuth = require('../middleware/basic');
 const productsCrud = require('../lib/models/product/product-collection');
 const cartsCrud = require('../lib/models/cart/cart-collection');
-
-
+const userSchema = require('../lib/models/user/users-schema')
+const productsSchema=require('../lib/models/product/product-schema')
 
 route.post('/signup',signUp);
 // basicAuth
@@ -46,14 +46,6 @@ function getAllProducts(req, res,next){
       res.json(allProducts);
     })
     .catch(next);
-    // .then(data => {
-    //   let output = {
-    //     Autherization:req.auth,
-    //     count: data.length,
-    //     results: data,
-    //   };
-    //   res.status(200).json(output);
-    // }).catch(next);
 }
 
 
@@ -119,7 +111,7 @@ function getAllCarts(req, res,next){
 }
 
 
-//find category By Id (GET)
+//find cart By Id (GET)
 route.get('/cart/:id',getByIdCart);
 function getByIdCart(req, res,next){
   let id = req.params.id;
@@ -129,7 +121,7 @@ function getByIdCart(req, res,next){
     })
     .catch(next);
 }
-//update specific catgeroy By Id (PUT)
+//update specific cart By Id (PUT)
 route.put('/cart/:id',updatedCartById);
 function updatedCartById(req, res,next){
   let id = req.params.id;
@@ -140,7 +132,7 @@ function updatedCartById(req, res,next){
     })
     .catch(next);
 }
-// delete specific catgeroy By Id (DELETE)
+// delete specific cart By Id (DELETE)
 route.delete('/cart/:id',deleteCart);
 function deleteCart(req, res,next){
   let id = req.params.id;
@@ -172,9 +164,77 @@ route.put('/select/:id', editOneProduct);
   }
 
 
+/***************************************One to many relation routes in mongoose for the cart screen******************************/
+
+                                   /**********Get the products for one user***********/
+
+route.post('/:userId/product', async (req, res) => {
+  //Find a user
+  const user = await userSchema.findOne({ _id: req.params.userId });
+   console.log('user',user)
+  //Create a product
+  const product = new productsSchema();
+  // console.log('product',product)
+  // console.log('req.body.title',req.body.title)
+
+  product.title = req.body.title;
+  // console.log('product.title',product.title)
+  product.desc = req.body.desc;
+  product.price = req.body.price;
+
+  product.user = user._id;
+  console.log('product.user',product.user)
+
+  console.log('user',user)
+
+  await product.save();
+
+  // Associate user with product
+  console.log('user.product', user.products)
+  user.products.push(product._id);
+  await user.save();
+
+  res.send(product);
+}
+);
+
+                                   /**********Get the products for one user***********/
+route.get('/:userId/product', async (req, res) => {
+  const user = await userSchema.findOne({ _id: req.params.userId }).populate(
+    'products',
+  );
+  console.log('user',user)
+  res.send(user);
+});
+
+                                  /**********Delete the product for the user***********/
+  route.delete('/:userId/product/:productId',  (req, res,next) => {
+    console.log('req.params',req.params.productId)
+    let id = req.params.productId;
+  // await productsSchema.findByIdAndDelete(req.params.productId);
+  productsCrud.delete(id)
+    .then(() =>{
+      // console.log(res.json)
+      res.json({delete:`you delete the product has Id: ${id}`});
+    })
+    .catch(next);
+});
 
 
 
+                                  /**********Edit the product for the user***********/
+
+  route.put('/:userId/product/:productId', (req, res,next) => {
+    console.log('req.params.productId',req.params.productId)
+    let id = req.params.productId;
+    let data = req.body;
+    console.log('data',data)
+    productsCrud.update(id,data)
+      .then(updatedProduct =>{
+        res.json(updatedProduct);
+      })
+      .catch(next);
+    })
 /*************************************************************************************************/
 // route.get('/oauth',OAuthMiddleware,signInGitHub);
 // for signUp
@@ -212,6 +272,9 @@ function allUsers(req,res,next){
 
     });
 }
+
+
+
 
 
 
