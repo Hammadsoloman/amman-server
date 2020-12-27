@@ -168,7 +168,7 @@ route.put('/select/:id', editOneProduct);
 
                                    /**********Get the products for one user***********/
 
-route.post('/product/:userId', async (req, res) => {
+route.post('/cart/:userId', async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
    console.log('user',user)
@@ -199,7 +199,7 @@ route.post('/product/:userId', async (req, res) => {
 );
 
                                    /**********Get the products for one user***********/
-route.get('/product/:userId', async (req, res) => {
+route.get('/cart/:userId', async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'products',
   );
@@ -208,7 +208,7 @@ route.get('/product/:userId', async (req, res) => {
 });
 
                                   /**********Delete the product for the user***********/
-  route.delete('/product/:userId/:productId',  (req, res,next) => {
+  route.delete('/cart/:userId/:productId',  (req, res,next) => {
     console.log('req.params',req.params.productId)
     let id = req.params.productId;
   // await productsSchema.findByIdAndDelete(req.params.productId);
@@ -224,7 +224,7 @@ route.get('/product/:userId', async (req, res) => {
 
                                   /**********Edit the product for the user***********/
 
-  route.put('/product/:userId/:productId', (req, res,next) => {
+  route.put('/cart/:userId/:productId', (req, res,next) => {
     console.log('req.params.productId',req.params.productId)
     let id = req.params.productId;
     let data = req.body;
