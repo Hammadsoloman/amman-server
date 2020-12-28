@@ -167,7 +167,7 @@ route.put('/select/:id', editOneProduct);
 
 /***************************************One to many relation routes in mongoose for the cart screen******************************/
 
-                                   /**********POST the products for one user***********/
+                                   /**********add to cart for one user***********/
 
 // route.post('/users/:userId', async (req, res) => {
 //   //Find a user
@@ -200,7 +200,7 @@ route.put('/select/:id', editOneProduct);
 // );
 
 
-route.post('/:userId/cart', async (req, res) => {
+route.post('/users/:userId/cart', async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
    console.log('user',user)
@@ -230,39 +230,48 @@ route.post('/:userId/cart', async (req, res) => {
 }
 );
 
-                                   /**********Get the products for one user***********/
-route.get('/:userId/cart', async (req, res) => {
+                                    /***********Get the cart for one user***********/
+route.get('/users/:userId/cart', async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'cart',
   );
-  console.log('user',user)
-  res.send(user);
+  console.log('user.cart',user.cart)
+  res.send(user.cart);
 });
 
-                                  /**********Delete the product for the user***********/
-  route.delete('/users/:userId/:productId',  (req, res,next) => {
-    console.log('req.params',req.params.productId)
-    let id = req.params.productId;
-  // await productsSchema.findByIdAndDelete(req.params.productId);
-  productsCrud.delete(id)
+                                    /***********Get the cart for one user***********/
+route.get('/users/:userId', async (req, res) => {
+const user = await userSchema.findOne({ _id: req.params.userId })
+  console.log('one user',user)
+  res.send(user);
+  });
+
+                                  /**********Delete one item in the cart for the user***********/
+  route.delete('/users/:userId/cart/:cartId',  (req, res,next) => {
+    console.log('req.params',req.params.cartId)
+    let id = req.params.cartId;
+  // await productsSchema.findByIdAndDelete(req.params.cartId);
+  cartsCrud.delete(id)
     .then(() =>{
       // console.log(res.json)
-      res.json({delete:`you delete the product has Id: ${id}`});
+      res.json({delete:`you delete the item has Id: ${id}`});
     })
     .catch(next);
 });
 
 
 
-                                  /**********Edit the product for the user***********/
+                                  /**********Edit one item in the cart for the user***********/
 
-  route.put('/users/:userId/:productId', (req, res,next) => {
-    console.log('req.params.productId',req.params.productId)
-    let id = req.params.productId;
+  route.put('/users/:userId/cart/:cartId', (req, res,next) => {
+    console.log('req.params.productId',req.params.cartId)
+    let id = req.params.cartId;
     let data = req.body;
     console.log('data',data)
-    productsCrud.update(id,data)
+    cartsCrud.update(id,data)
       .then(updatedProduct =>{
+        console.log('updatedProduct',updatedProduct.quantity++  )
+
         res.json(updatedProduct);
       })
       .catch(next);
