@@ -8,6 +8,7 @@ const productsCrud = require('../lib/models/product/product-collection');
 const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
+const cartSchema=require('../lib/models/cart/cart-schema')
 
 route.post('/signup',signUp);
 // basicAuth
@@ -166,42 +167,73 @@ route.put('/select/:id', editOneProduct);
 
 /***************************************One to many relation routes in mongoose for the cart screen******************************/
 
-                                   /**********Get the products for one user***********/
+                                   /**********POST the products for one user***********/
 
-route.post('/users/:userId', async (req, res) => {
+// route.post('/users/:userId', async (req, res) => {
+//   //Find a user
+//   const user = await userSchema.findOne({ _id: req.params.userId });
+//    console.log('user',user)
+//   //Create a product
+//   const product = new productsSchema();
+//   // console.log('product',product)
+//   // console.log('req.body.title',req.body.title)
+
+//   product.title = req.body.title;
+//   // console.log('product.title',product.title)
+//   product.desc = req.body.desc;
+//   product.price = req.body.price;
+
+//   product.user = user._id;
+//   console.log('product.user',product.user)
+
+//   console.log('user',user)
+
+//   await product.save();
+
+//   // Associate user with product
+//   console.log('user.product', user.products)
+//   user.products.push(product._id);
+//   await user.save();
+
+//   res.send(product);
+// }
+// );
+
+
+route.post('/:userId/cart', async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
    console.log('user',user)
   //Create a product
-  const product = new productsSchema();
-  // console.log('product',product)
-  // console.log('req.body.title',req.body.title)
+  const item = new cartSchema();
+  console.log('item',item)
+  console.log('req.body.title',req.body.title)
 
-  product.title = req.body.title;
-  // console.log('product.title',product.title)
-  product.desc = req.body.desc;
-  product.price = req.body.price;
+  item.title = req.body.title;
+  console.log('item.title',item.title)
+  item.desc = req.body.desc;
+  item.price = req.body.price;
 
-  product.user = user._id;
-  console.log('product.user',product.user)
+  item.user = user._id;
+  console.log('item.user',item.user)
 
   console.log('user',user)
 
-  await product.save();
+  await item.save();
 
-  // Associate user with product
-  console.log('user.product', user.products)
-  user.products.push(product._id);
+  // Associate user with cart
+  // console.log('item.product', cart.products)
+  user.cart.push(item._id);
   await user.save();
 
-  res.send(product);
+  res.send(item);
 }
 );
 
                                    /**********Get the products for one user***********/
-route.get('/users/:userId', async (req, res) => {
+route.get('/:userId/cart', async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
-    'products',
+    'cart',
   );
   console.log('user',user)
   res.send(user);
