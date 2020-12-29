@@ -249,9 +249,9 @@ const user = await userSchema.findOne({ _id: req.params.userId })
   });
 
                                   /**********Delete one item in the cart for the user***********/
-  route.delete('/user/:userId/cart/:cartId',  (req, res,next) => {
-    console.log('req.params',req.params.cartId)
-    let id = req.params.cartId;
+  route.delete('/cart/:userId/:itemId',  (req, res,next) => {
+    console.log('req.params',req.params.itemId)
+    let id = req.params.itemId;
   // await productsSchema.findByIdAndDelete(req.params.cartId);
   cartsCrud.delete(id)
     .then(() =>{
