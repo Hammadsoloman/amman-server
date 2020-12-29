@@ -199,6 +199,7 @@ route.put('/select/:id', editOneProduct);
 // }
 // );
 
+/***************************************add to cart********************** */
 
 route.post('/cart/:userId', async (req, res) => {
   //Find a user
@@ -215,6 +216,8 @@ route.post('/cart/:userId', async (req, res) => {
   console.log('item.title',item.title)
   item.desc = req.body.desc;
   item.price = req.body.price;
+  item.qunatity = req.body.qunatity;
+  item.image = req.body.image;
 
   item.user = user._id;
   console.log('item.user',item.user)
