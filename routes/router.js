@@ -204,6 +204,14 @@ route.put('/select/:id', editOneProduct);
 route.post('/cart/:userId', async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
+  // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
+  // let itemInCart= state.cartItem.findOne({ _id: req.body.id })
+  console.log('user',user)
+  // console.log('itemInCart',itemInCart)
+  // console.log('cartSchema',cartSchema)
+
+
+  // if(!itemInCart){
    console.log('user',user)
    console.log('userId', req.params.userId)
 
@@ -216,7 +224,7 @@ route.post('/cart/:userId', async (req, res) => {
   console.log('item.title',item.title)
   item.desc = req.body.desc;
   item.price = req.body.price;
-  item.qunatity = req.body.qunatity;
+  item.quantity = req.body.quantity;
   item.image = req.body.image;
 
   item.user = user._id;
@@ -232,6 +240,9 @@ route.post('/cart/:userId', async (req, res) => {
   await user.save();
 
   res.send(item);
+  // }else{
+  //   console.log('you try to add exicted item!')
+  // }
 }
 );
 
@@ -266,21 +277,26 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
 
 
-                                  /**********Edit one item in the cart for the user***********/
+                               /**********Edit one item in the cart for the user***********/
 
-  route.put('/users/:userId/cart/:cartId', (req, res,next) => {
-    console.log('req.params.productId',req.params.cartId)
+  route.put('/cart/:userId/:itemId', (req, res,next) => {
+    console.log('req.params.itemIdId',req.params.itemId)
     let id = req.params.cartId;
     let data = req.body;
     console.log('data',data)
     cartsCrud.update(id,data)
       .then(updatedProduct =>{
-        console.log('updatedProduct',updatedProduct.quantity++  )
+        console.log('updatedProduct ',updatedProduct)
 
         res.json(updatedProduct);
       })
       .catch(next);
     })
+
+
+
+
+
 /*************************************************************************************************/
 // route.get('/oauth',OAuthMiddleware,signInGitHub);
 // for signUp
