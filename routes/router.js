@@ -23,7 +23,7 @@ route.get('/users',allUsers);
 /***************************************************PRODUCT CRUD METHODS**************************************/
 
 
-route.post('/product',basicAuth,postProduct);
+route.post('/product',bearer,postProduct);
 function postProduct(req, res,next){
   let data = req.body;
   productsCrud.create(data)
@@ -33,7 +33,7 @@ function postProduct(req, res,next){
     .catch(next);
 }
 //find All products (GET)
-route.get('/product',basicAuth,getAllProducts);
+route.get('/product',bearer,getAllProducts);
 function getAllProducts(req, res,next){
   productsCrud.get()
   
@@ -195,7 +195,7 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
 
 /***************************************add to cart********************** */
 
-route.post('/cart/:userId',basicAuth, async (req, res) => {
+route.post('/cart/:userId',bearer, async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
   // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
@@ -241,7 +241,7 @@ route.post('/cart/:userId',basicAuth, async (req, res) => {
 );
 
                                     /***********Get the cart for one user***********/
-route.get('/cart/:userId',basicAuth, async (req, res) => {
+route.get('/cart/:userId',bearer, async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'cart',
   );
@@ -257,7 +257,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
   });
 
                                   /**********Delete one item in the cart for the user***********/
-  route.delete('/cart/:userId/:itemId',basicAuth,  (req, res,next) => {
+  route.delete('/cart/:userId/:itemId',bearer,  (req, res,next) => {
     console.log('req.params',req.params.itemId)
     let id = req.params.itemId;
   // await productsSchema.findByIdAndDelete(req.params.cartId);
@@ -273,7 +273,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
                                /**********Edit one item in the cart for the user***********/
 
-  route.put('/cart/:userId/:itemId',basicAuth, (req, res,next) => {
+  route.put('/cart/:userId/:itemId',bearer, (req, res,next) => {
     console.log('req.params.itemIdId',req.params.itemId)
     let id = req.params.cartId;
     let data = req.body;
