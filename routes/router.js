@@ -4,6 +4,8 @@ const express = require('express');
 const route = express.Router();
 const userModel = require('../lib/models/user/users-model');
 const basicAuth = require('../middleware/basic');
+const bearer = require('../middleware/bearer');
+const permissions=require('../middleware/permissions')
 const productsCrud = require('../lib/models/product/product-collection');
 const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
@@ -12,7 +14,7 @@ const cartSchema=require('../lib/models/cart/cart-schema')
 
 route.post('/signup',signUp);
 // basicAuth
-route.post('/signin',signIn);
+route.post('/signin',basicAuth,signIn);
 route.get('/users',allUsers);
 
 
@@ -38,7 +40,7 @@ function postProduct(req, res,next){
     })
     .catch(next);
 }
-//find All categories (GET)
+//find All products (GET)
 route.get('/product',getAllProducts);
 function getAllProducts(req, res,next){
   productsCrud.get()
@@ -51,7 +53,7 @@ function getAllProducts(req, res,next){
 
 
 //find category By Id (GET)
-route.get('/product/:id',getByIdProduct);
+route.get('/product/:id',bearer,getByIdProduct);
 function getByIdProduct(req, res,next){
   let id = req.params.id;
   productsCrud.get(id)
@@ -61,7 +63,7 @@ function getByIdProduct(req, res,next){
     .catch(next);
 }
 //update specific catgeroy By Id (PUT)
-route.put('/product/:id',updatedProductById);
+route.put('/product/:id',bearer,updatedProductById);
 function updatedProductById(req, res,next){
   let id = req.params.id;
   let data = req.body;
@@ -72,7 +74,7 @@ function updatedProductById(req, res,next){
     .catch(next);
 }
 // delete specific catgeroy By Id (DELETE)
-route.delete('/product/:id',deleteProduct);
+route.delete('/product/:id',bearer,permissions('admin'),deleteProduct);
 function deleteProduct(req, res,next){
   let id = req.params.id;
   productsCrud.delete(id)
@@ -148,7 +150,7 @@ function deleteProduct(req, res,next){
 
 /***************************************** ADMIN ****************************************************/
 
-route.put('/select/:id', editOneProduct);
+route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
   function editOneProduct(req, res,next)  {
     productsCrud 
       .update(req.params.id,req.body)
@@ -156,7 +158,7 @@ route.put('/select/:id', editOneProduct);
       .catch(err=>next(err.message));  
   }
   
-  route.get('/selectAll', getAllProductAdmin);
+  route.get('/selectAll',bearer,permissions('admin'), getAllProductAdmin);
   function getAllProductAdmin(req, res, next) {
     productsCrud
       .get()
@@ -201,7 +203,7 @@ route.put('/select/:id', editOneProduct);
 
 /***************************************add to cart********************** */
 
-route.post('/cart/:userId', async (req, res) => {
+route.post('/cart/:userId',bearer, async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
   // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
@@ -247,7 +249,7 @@ route.post('/cart/:userId', async (req, res) => {
 );
 
                                     /***********Get the cart for one user***********/
-route.get('/cart/:userId', async (req, res) => {
+route.get('/cart/:userId',bearer, async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'cart',
   );
@@ -256,14 +258,14 @@ route.get('/cart/:userId', async (req, res) => {
 });
 
                                     /***********Get one user***********/
-route.get('/users/:userId', async (req, res) => {
+route.get('/users/:userId',bearer, async (req, res) => {
 const user = await userSchema.findOne({ _id: req.params.userId })
   console.log('one user',user)
   res.send(user);
   });
 
                                   /**********Delete one item in the cart for the user***********/
-  route.delete('/cart/:userId/:itemId',  (req, res,next) => {
+  route.delete('/cart/:userId/:itemId',bearer,  (req, res,next) => {
     console.log('req.params',req.params.itemId)
     let id = req.params.itemId;
   // await productsSchema.findByIdAndDelete(req.params.cartId);
@@ -298,13 +300,15 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
 
 /*************************************************************************************************/
-// route.get('/oauth',OAuthMiddleware,signInGitHub);
-// for signUp
+
 function signUp(req,res,next){
   let newUser = req.body;
+  console.log('newUser',newUser)
   userModel.save(newUser)
     .then(result =>{
       let token = userModel.generateToken(result);
+      console.log('token in then signup',token)
+
       res.cookie('token', token, {
         expires  : new Date(Date.now() + 9999999),
         httpOnly : false,
@@ -319,6 +323,8 @@ function signUp(req,res,next){
 }
 // for sign In
 function signIn(req,res,next){
+  console.log('req.token')
+
   res.cookie('token', req.token, {
     expires  : new Date(Date.now() + 9999999),
     httpOnly : false,
