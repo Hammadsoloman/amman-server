@@ -33,7 +33,7 @@ function postProduct(req, res,next){
     .catch(next);
 }
 //find All products (GET)
-route.get('/product',bearer,getAllProducts);
+route.get('/product',getAllProducts);
 function getAllProducts(req, res,next){
   productsCrud.get()
   
