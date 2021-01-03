@@ -305,11 +305,13 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
                                /**********Edit one item in the cart for the user***********/
 //  ,bearer
-  route.put('/cart/:userId/:itemId', (req, res,next) => {
+  route.put('/cart/:userId/:itemId', (req, res) => {
     console.log('req.params.itemIdId',req.params.itemId)
-    let id = req.params.cartId;
+    let id = req.params.itemId;
+    console.log('data in update',id)
     let data = req.body;
-    console.log('data',data)
+    console.log('data in update',data)
+
     cartsCrud.update(id,data)
       .then(updatedProduct =>{
         console.log('updatedProduct ',updatedProduct)
@@ -323,7 +325,12 @@ const user = await userSchema.findOne({ _id: req.params.userId })
     })
 
 
-
+    // productsCrud 
+    // .update(req.params.id,req.body)
+    // .then(data =>res.json(data))
+    // .catch(()=>{
+    //   res.status(500).send('error in the server when you selectAll the items for the admin');
+    // }); 
 
 
 /*************************************************************************************************/
