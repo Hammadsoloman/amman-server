@@ -30,7 +30,10 @@ function postProduct(req, res,next){
     .then(productAdded=>{
       res.json(productAdded);
     })
-    .catch(next);
+    .catch(()=>{
+      res.status(500).send('error in the server when you add new item');
+    
+    });
 }
 //find All products (GET)
 route.get('/product',getAllProducts);
@@ -40,7 +43,10 @@ function getAllProducts(req, res,next){
     .then(allProducts =>{
       res.json(allProducts);
     })
-    .catch(next);
+    .catch(()=>{
+      res.status(500).send('error in the server when you get all the item in product page');
+    
+    });
 }
 
 
@@ -52,7 +58,10 @@ function getByIdProduct(req, res,next){
     .then(productId =>{
       res.json(productId);
     })
-    .catch(next);
+    .catch(()=>{
+      res.status(500).send('error in the server when you getOneItem');
+    
+    });
 }
 //update specific catgeroy By Id (PUT)
 route.put('/product/:id',bearer,updatedProductById);
@@ -63,7 +72,10 @@ function updatedProductById(req, res,next){
     .then(updatedProduct =>{
       res.json(updatedProduct);
     })
-    .catch(next);
+    .catch(()=>{
+      res.status(500).send('error in the server when you updateOneItem');
+    
+    });
 }
 // delete specific catgeroy By Id (DELETE)
 route.delete('/product/:id',bearer,permissions('admin'),deleteProduct);
@@ -73,7 +85,9 @@ function deleteProduct(req, res,next){
     .then(() =>{
       res.json({delete:`you delete the product has Id: ${id}`});
     })
-    .catch(next);
+    .catch(()=>{
+      res.status(500).send('error in the server when you delete OneItem, i used this route in the admin page');
+    });
 }
 /***************************************************CART CRUD METHODS**************************************/
 
@@ -147,7 +161,9 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
     productsCrud 
       .update(req.params.id,req.body)
       .then(data =>res.json(data))
-      .catch(err=>next(err.message));  
+      .catch(()=>{
+        res.status(500).send('error in the server when you selectAll the items for the admin');
+      }); 
   }
   
   route.get('/selectAll',bearer,permissions('admin'), getAllProductAdmin);
@@ -155,7 +171,9 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
     productsCrud
       .get()
       .then((data) => res.json(data))
-      .catch((err) => next(err.message));
+      .catch(()=>{
+        res.status(500).send('error in the server when you selectAll the items for the admin');
+      }); 
   }
 
 
@@ -234,6 +252,9 @@ route.post('/cart/:userId',bearer, async (req, res) => {
   await user.save();
 
   res.send(item);
+  res.status(500).send('the error when you try to add item to the cart in post route');
+
+
   // }else{
   //   console.log('you try to add exicted item!')
   // }
@@ -247,6 +268,8 @@ route.get('/cart/:userId',bearer, async (req, res) => {
   );
   console.log('user.cart',user.cart)
   res.send(user.cart);
+  res.status(500).send('the error when you try Get the cart for one user');
+
 });
 
                                     /***********Get one user***********/
@@ -254,6 +277,8 @@ route.get('/users/:userId',bearer, async (req, res) => {
 const user = await userSchema.findOne({ _id: req.params.userId })
   console.log('one user',user)
   res.send(user);
+  res.status(500).send('the error when you try Get one user');
+
   });
 
                                   /**********Delete one item in the cart for the user***********/
@@ -284,7 +309,10 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
         res.json(updatedProduct);
       })
-      .catch(next);
+      .catch(()=>{
+        res.status(500).send('error in the server when you Edit one item in the cart for the user');
+      
+      });
     })
 
 
@@ -309,7 +337,7 @@ function signUp(req,res,next){
     })
     .catch(()=>{
       res.status(403).send('Invalid Signup! This userName is taken');
-    
+
     });
 
 
@@ -323,6 +351,8 @@ function signIn(req,res,next){
     httpOnly : false,
   });
   res.status(200).send({  token: req.token });
+  res.status(500).send('the error in sign in route');
+
 }
 
 // get all users
