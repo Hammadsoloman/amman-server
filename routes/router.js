@@ -3,9 +3,9 @@
 const express = require('express');
 const route = express.Router();
 const userModel = require('../lib/models/user/users-model');
-const basicAuth = require('../middleware/basic');
-const bearer = require('../middleware/bearer');
-const permissions=require('../middleware/permissions')
+// const basicAuth = require('../middleware/basic');
+// const bearer = require('../middleware/bearer');
+// const permissions=require('../middleware/permissions')
 const productsCrud = require('../lib/models/product/product-collection');
 const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
@@ -14,7 +14,7 @@ const cartSchema=require('../lib/models/cart/cart-schema')
 
 route.post('/signup',signUp);
 // basicAuth
-route.post('/signin',basicAuth,signIn);
+route.post('/signin',signIn);
 route.get('/users',allUsers);
 
 
@@ -22,8 +22,8 @@ route.get('/users',allUsers);
 
 /***************************************************PRODUCT CRUD METHODS**************************************/
 
-
-route.post('/product',bearer,postProduct);
+// ,bearer
+route.post('/product',postProduct);
 function postProduct(req, res,next){
   let data = req.body;
   productsCrud.create(data)
@@ -51,7 +51,8 @@ function getAllProducts(req, res,next){
 
 
 //find category By Id (GET)
-route.get('/product/:id',bearer,getByIdProduct);
+// ,bearer
+route.get('/product/:id',getByIdProduct);
 function getByIdProduct(req, res,next){
   let id = req.params.id;
   productsCrud.get(id)
@@ -64,7 +65,8 @@ function getByIdProduct(req, res,next){
     });
 }
 //update specific catgeroy By Id (PUT)
-route.put('/product/:id',bearer,updatedProductById);
+// ,bearer
+route.put('/product/:id',updatedProductById);
 function updatedProductById(req, res,next){
   let id = req.params.id;
   let data = req.body;
@@ -78,7 +80,8 @@ function updatedProductById(req, res,next){
     });
 }
 // delete specific catgeroy By Id (DELETE)
-route.delete('/product/:id',bearer,permissions('admin'),deleteProduct);
+// ,bearer,permissions('admin')
+route.delete('/product/:id',deleteProduct);
 function deleteProduct(req, res,next){
   let id = req.params.id;
   productsCrud.delete(id)
@@ -155,8 +158,8 @@ function deleteProduct(req, res,next){
 
 
 /***************************************** ADMIN ****************************************************/
-
-route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
+// ,bearer,permissions('admin')
+route.put('/select/:id',editOneProduct);
   function editOneProduct(req, res,next)  {
     productsCrud 
       .update(req.params.id,req.body)
@@ -165,8 +168,8 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
         res.status(500).send('error in the server when you selectAll the items for the admin');
       }); 
   }
-  
-  route.get('/selectAll',bearer,permissions('admin'), getAllProductAdmin);
+  // ,bearer,permissions('admin')
+  route.get('/selectAll', getAllProductAdmin);
   function getAllProductAdmin(req, res, next) {
     productsCrud
       .get()
@@ -212,8 +215,8 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
 // );
 
 /***************************************add to cart********************** */
-
-route.post('/cart/:userId',bearer, async (req, res) => {
+// ,bearer
+route.post('/cart/:userId', async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
   // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
@@ -262,7 +265,8 @@ route.post('/cart/:userId',bearer, async (req, res) => {
 );
 
                                     /***********Get the cart for one user***********/
-route.get('/cart/:userId',bearer, async (req, res) => {
+  // ,bearer
+route.get('/cart/:userId', async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'cart',
   );
@@ -273,7 +277,8 @@ route.get('/cart/:userId',bearer, async (req, res) => {
 });
 
                                     /***********Get one user***********/
-route.get('/users/:userId',bearer, async (req, res) => {
+  // ,bearer
+route.get('/users/:userId', async (req, res) => {
 const user = await userSchema.findOne({ _id: req.params.userId })
   console.log('one user',user)
   res.send(user);
@@ -282,7 +287,9 @@ const user = await userSchema.findOne({ _id: req.params.userId })
   });
 
                                   /**********Delete one item in the cart for the user***********/
-  route.delete('/cart/:userId/:itemId',bearer,  (req, res,next) => {
+
+  //  ,bearer
+  route.delete('/cart/:userId/:itemId',  (req, res,next) => {
     console.log('req.params',req.params.itemId)
     let id = req.params.itemId;
   // await productsSchema.findByIdAndDelete(req.params.cartId);
@@ -297,8 +304,8 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
 
                                /**********Edit one item in the cart for the user***********/
-
-  route.put('/cart/:userId/:itemId',bearer, (req, res,next) => {
+//  ,bearer
+  route.put('/cart/:userId/:itemId', (req, res,next) => {
     console.log('req.params.itemIdId',req.params.itemId)
     let id = req.params.cartId;
     let data = req.body;
