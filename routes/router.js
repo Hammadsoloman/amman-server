@@ -298,11 +298,11 @@ route.post('/order/:userId', async (req, res) => {
   console.log('item.user',item.user)
 
   console.log('user',user)
-
+  let foundError = ""
   await item.save()
   .catch(()=>{
-    res.status(500).send('error in the server when you save the item');
-  
+    //res.status(500).send('error in the server when you save the item');
+    foundError = 'error in the server when you save the item'
   });
   
   // Associate user with cart
@@ -310,12 +310,14 @@ route.post('/order/:userId', async (req, res) => {
   user.order.push(item._id);
   await user.save()
   .catch(()=>{
-    res.status(500).send('error in the server when you save the item in the user');
-  
+    //res.status(500).send('error in the server when you save the item in the user');
+    foundError = 'error in the server when you save the item in the user'
   });
 
-  res.send(item);
-  // res.status(500).send('the error when you try to post the order');
+  if ( !foundError )
+    res.send(item);
+  else
+    res.status(500).send('the error when you try to post the order');
   
 
   
