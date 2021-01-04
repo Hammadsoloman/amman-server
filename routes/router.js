@@ -242,7 +242,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
                                /**********Edit one item in the cart for the user***********/
 //  ,bearer
-  route.put('/cart/:userId/:itemId', (req, res) => {
+  route.put('/cart/:userId/:itemId',bearer,(req, res) => {
     console.log('req.params.itemIdId',req.params.itemId)
     let id = req.params.itemId;
     console.log('data in update',id)
@@ -255,6 +255,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
         res.json(updatedProduct);
       })
+      
       .catch(()=>{
         res.status(500).send('error in the server when you Edit one item in the cart for the user');
       
