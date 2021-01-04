@@ -153,7 +153,7 @@ route.put('/select/:id',editOneProduct,bearer,permissions('admin'));
 
 /***************************************add to cart********************** */
 // ,bearer
-route.post('/cart/:userId', async (req, res) => {
+route.post('/cart/:userId',bearer,async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
   // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
@@ -203,7 +203,7 @@ route.post('/cart/:userId', async (req, res) => {
 
                                     /***********Get the cart for one user***********/
   // ,bearer
-route.get('/cart/:userId', async (req, res) => {
+route.get('/cart/:userId',bearer, async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'cart',
   );
@@ -226,7 +226,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
                                   /**********Delete one item in the cart for the user***********/
 
   //  ,bearer
-  route.delete('/cart/:userId/:itemId',  (req, res,next) => {
+  route.delete('/cart/:userId/:itemId',bearer,  (req, res,next) => {
     console.log('req.params',req.params.itemId)
     let id = req.params.itemId;
   // await productsSchema.findByIdAndDelete(req.params.cartId);
