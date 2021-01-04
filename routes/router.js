@@ -3,7 +3,7 @@
 const express = require('express');
 const route = express.Router();
 const userModel = require('../lib/models/user/users-model');
-// const basicAuth = require('../middleware/basic');
+const basicAuth = require('../middleware/basic');
 // const bearer = require('../middleware/bearer');
 // const permissions=require('../middleware/permissions')
 const productsCrud = require('../lib/models/product/product-collection');
@@ -14,7 +14,7 @@ const cartSchema=require('../lib/models/cart/cart-schema')
 const orderSchema=require('../lib/models/order/order-schema')
 route.post('/signup',signUp);
 // basicAuth
-route.post('/signin',signIn);
+route.post('/signin',basicAuth,signIn);
 route.get('/users',allUsers);
 
 
