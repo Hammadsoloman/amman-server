@@ -11,7 +11,7 @@ const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
 const cartSchema=require('../lib/models/cart/cart-schema')
-
+const orderSchema=require('../lib/models/order/order-schema')
 route.post('/signup',signUp);
 // basicAuth
 route.post('/signin',signIn);
@@ -92,72 +92,9 @@ function deleteProduct(req, res,next){
       res.status(500).send('error in the server when you delete OneItem, i used this route in the admin page');
     });
 }
-/***************************************************CART CRUD METHODS**************************************/
-
-// route.post('/cart',postCart);
-// function postCart(req, res,next){
-//   let data = req.body;
-//   cartsCrud.create(data)
-//     .then(productAdded=>{
-//       res.json(productAdded);
-//     })
-//     .catch(next);
-// }
-// //find All categories (GET)
-// route.get('/cart',getAllCarts);
-// function getAllCarts(req, res,next){
-//   cartsCrud.get()
-  
-//     .then(allProducts =>{
-//       res.json(allProducts);
-//     })
-//     .catch(next);
-//     // .then(data => {
-//     //   let output = {
-//     //     Autherization:req.auth,
-//     //     count: data.length,
-//     //     results: data,
-//     //   };
-//     //   res.status(200).json(output);
-//     // }).catch(next);
-// }
 
 
-// //find cart By Id (GET)
-// route.get('/cart/:id',getByIdCart);
-// function getByIdCart(req, res,next){
-//   let id = req.params.id;
-//   cartsCrud.get(id)
-//     .then(productId =>{
-//       res.json(productId);
-//     })
-//     .catch(next);
-// }
-// //update specific cart By Id (PUT)
-// route.put('/cart/:id',updatedCartById);
-// function updatedCartById(req, res,next){
-//   let id = req.params.id;
-//   let data = req.body;
-//   cartsCrud.update(id,data)
-//     .then(updatedProduct =>{
-//       res.json(updatedProduct);
-//     })
-//     .catch(next);
-// }
-// // delete specific cart By Id (DELETE)
-// route.delete('/cart/:id',deleteCart);
-// function deleteCart(req, res,next){
-//   let id = req.params.id;
-//   cartsCrud.delete(id)
-//     .then(() =>{
-//       res.json({delete:`you delete the cart has Id: ${id}`});
-//     })
-//     .catch(next);
-// }
-
-
-
-/***************************************** ADMIN ****************************************************/
+/***************************************** ADMIN CRUD METHODS ****************************************************/
 // ,bearer,permissions('admin')
 route.put('/select/:id',editOneProduct);
   function editOneProduct(req, res,next)  {
@@ -325,16 +262,81 @@ const user = await userSchema.findOne({ _id: req.params.userId })
     })
 
 
-    // productsCrud 
-    // .update(req.params.id,req.body)
-    // .then(data =>res.json(data))
-    // .catch(()=>{
-    //   res.status(500).send('error in the server when you selectAll the items for the admin');
-    // }); 
+
+/************************************************ORDER************************************************************/
 
 
-/*************************************************************************************************/
+route.post('/order/:userId', async (req, res) => {
 
+  
+  //Find a user
+  const user = await userSchema.findOne({ _id: req.params.userId });
+  // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
+  // let itemInCart= state.cartItem.findOne({ _id: req.body.id })
+  console.log('user',user)
+  // console.log('itemInCart',itemInCart)
+  // console.log('cartSchema',cartSchema)
+
+
+  // if(!itemInCart){
+   console.log('user',user)
+   console.log('userId', req.params.userId)
+
+  //Create a product
+  const item = new orderSchema();
+  console.log('item',item)
+  console.log('req.body.title',req.body.title)
+
+  item.title = req.body.title;
+  console.log('item.title',item.title)
+  item.desc = req.body.desc;
+  item.price = req.body.price;
+  item.quantity = req.body.quantity;
+  item.image = req.body.image;
+
+  item.user = user._id;
+  console.log('item.user',item.user)
+
+  console.log('user',user)
+
+  await item.save()
+  .catch(()=>{
+    res.status(500).send('error in the server when you save the item');
+  
+  });
+  
+  // Associate user with cart
+  // console.log('item.product', cart.products)
+  user.order.push(item._id);
+  await user.save()
+  .catch(()=>{
+    res.status(500).send('error in the server when you save the item in the user');
+  
+  });
+
+  res.send(item);
+  // res.status(500).send('the error when you try to post the order');
+  
+
+  
+}
+);
+
+                                    /***********Get the order for one user***********/
+  // ,bearer
+route.get('/order/:userId', async (req, res) => {
+  const user = await userSchema.findOne({ _id: req.params.userId }).populate(
+    'order',
+  );
+  console.log('user.order',user.order)
+  res.send(user.order);
+  res.status(500).send('the error when you try Get the order for one user');
+
+});
+
+
+
+/*****************************************************Auth***************************************/
 function signUp(req,res,next){
   let newUser = req.body;
   console.log('newUser',newUser)
