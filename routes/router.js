@@ -4,8 +4,8 @@ const express = require('express');
 const route = express.Router();
 const userModel = require('../lib/models/user/users-model');
 const basicAuth = require('../middleware/basic');
-// const bearer = require('../middleware/bearer');
-// const permissions=require('../middleware/permissions')
+const bearer = require('../middleware/bearer');
+const permissions=require('../middleware/permissions')
 const productsCrud = require('../lib/models/product/product-collection');
 const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
@@ -23,7 +23,7 @@ route.get('/users',allUsers);
 /***************************************************PRODUCT CRUD METHODS**************************************/
 
 // ,bearer
-route.post('/product',postProduct);
+route.post('/product',postProduct,bearer);
 function postProduct(req, res,next){
   let data = req.body;
   productsCrud.create(data)
@@ -52,7 +52,7 @@ function getAllProducts(req, res,next){
 
 //find category By Id (GET)
 // ,bearer
-route.get('/product/:id',getByIdProduct);
+route.get('/product/:id',getByIdProduct,bearer);
 function getByIdProduct(req, res,next){
   let id = req.params.id;
   productsCrud.get(id)
@@ -66,7 +66,7 @@ function getByIdProduct(req, res,next){
 }
 //update specific catgeroy By Id (PUT)
 // ,bearer
-route.put('/product/:id',updatedProductById);
+route.put('/product/:id',updatedProductById,bearer);
 function updatedProductById(req, res,next){
   let id = req.params.id;
   let data = req.body;
@@ -81,7 +81,7 @@ function updatedProductById(req, res,next){
 }
 // delete specific catgeroy By Id (DELETE)
 // ,bearer,permissions('admin')
-route.delete('/product/:id',deleteProduct);
+route.delete('/product/:id',deleteProduct,bearer,permissions('admin'));
 function deleteProduct(req, res,next){
   let id = req.params.id;
   productsCrud.delete(id)
@@ -96,7 +96,7 @@ function deleteProduct(req, res,next){
 
 /***************************************** ADMIN CRUD METHODS ****************************************************/
 // ,bearer,permissions('admin')
-route.put('/select/:id',editOneProduct);
+route.put('/select/:id',editOneProduct,bearer,permissions('admin'));
   function editOneProduct(req, res,next)  {
     productsCrud 
       .update(req.params.id,req.body)
@@ -106,7 +106,7 @@ route.put('/select/:id',editOneProduct);
       }); 
   }
   // ,bearer,permissions('admin')
-  route.get('/selectAll', getAllProductAdmin);
+  route.get('/selectAll', getAllProductAdmin,bearer,permissions('admin'));
   function getAllProductAdmin(req, res, next) {
     productsCrud
       .get()
@@ -266,7 +266,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 /************************************************ORDER************************************************************/
 
 
-route.post('/order/:userId', async (req, res) => {
+route.post('/order/:userId',bearer,async (req, res) => {
 
   
   //Find a user
@@ -325,7 +325,7 @@ route.post('/order/:userId', async (req, res) => {
 
                                     /***********Get the order for one user***********/
   // ,bearer
-route.get('/order/:userId', async (req, res) => {
+route.get('/order/:userId', bearer,async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'order',
   );
