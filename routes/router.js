@@ -285,8 +285,8 @@ route.post('/order/:userId', async (req, res) => {
   //Create a product
   const item = new orderSchema();
   console.log('item',item)
-  console.log('req.body',req.body[0])
-    let newBody=req.body[0]
+  console.log('req.body',req.body)
+    let newBody=req.body
     console.log('newBodyafter adding [0]',newBody)
   item.title = newBody.title;
   console.log('item.title',item.title)
@@ -312,7 +312,7 @@ route.post('/order/:userId', async (req, res) => {
   await user.save()
   .catch(()=>{
     //res.status(500).send('error in the server when you save the item in the user');
-    foundError = 'error in the server when you save the item in the user'
+    foundError = 'error in the server when you save the user'
   });
 
   if ( !foundError )
@@ -330,8 +330,18 @@ route.get('/order/:userId', async (req, res) => {
     'order',
   );
   console.log('user.order',user.order)
-  res.send(user.order);
-  res.status(500).send('the error when you try Get the order for one user');
+
+
+  
+  let foundError = ""
+
+  if ( !foundError ){
+    console.log('!foundError in get order')
+    res.send(user.order);
+  }  else {
+    res.status(500).send('the error when you try Get the order for one user');
+  }
+    
 
 });
 
@@ -361,14 +371,25 @@ function signUp(req,res,next){
 }
 // for sign In
 function signIn(req,res,next){
-  console.log('req.token')
-
+  
+  console.log('req.token in signin',req.token)
   res.cookie('token', req.token, {
     expires  : new Date(Date.now() + 9999999),
     httpOnly : false,
   });
-  res.status(200).send({  token: req.token });
+
+  let foundError = ""
+
+  if (!foundError){
+    console.log('!foundError',!foundError)
+  res.send({  token: req.token });
+        }else{
   res.status(500).send('the error in sign in route');
+   }
+
+
+  // res.status(200).send({  token: req.token });
+  // res.status(500).send('the error in sign in route');
 
 }
 
