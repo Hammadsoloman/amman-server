@@ -286,7 +286,7 @@ route.post('/order/:userId', async (req, res) => {
   const item = new orderSchema();
   console.log('item',item)
   console.log('req.body',req.body)
-    let newBody=req.body
+    let newBody=req.body[0]
     console.log('newBodyafter adding [0]',newBody)
   item.title = newBody.title;
   console.log('item.title',item.title)
@@ -332,7 +332,7 @@ route.get('/order/:userId', async (req, res) => {
   console.log('user.order',user.order)
 
 
-  
+
   let foundError = ""
 
   if ( !foundError ){
