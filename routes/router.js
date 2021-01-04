@@ -285,14 +285,15 @@ route.post('/order/:userId', async (req, res) => {
   //Create a product
   const item = new orderSchema();
   console.log('item',item)
-  console.log('req.body',req.body)
-
-  item.title = req.body.title;
+  console.log('req.body',req.body[0])
+    let newBody=req.body[0]
+    console.log('newBodyafter adding [0]',newBody)
+  item.title = newBody.title;
   console.log('item.title',item.title)
-  item.desc = req.body.desc;
-  item.price = req.body.price;
-  item.quantity = req.body.quantity;
-  item.image = req.body.image;
+  item.desc = newBody.desc;
+  item.price = newBody.price;
+  item.quantity = newBody.quantity;
+  item.image = newBody.image;
 
   item.user = user._id;
   console.log('item.user',item.user)
@@ -318,9 +319,7 @@ route.post('/order/:userId', async (req, res) => {
     res.send(item);
   else
     res.status(500).send('the error when you try to post the order');
-  
-
-  
+    
 }
 );
 
