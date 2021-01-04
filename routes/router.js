@@ -285,7 +285,7 @@ route.post('/order/:userId', async (req, res) => {
   //Create a product
   const item = new orderSchema();
   console.log('item',item)
-  console.log('req.body.title',req.body.title)
+  console.log('req.body',req.body)
 
   item.title = req.body.title;
   console.log('item.title',item.title)
