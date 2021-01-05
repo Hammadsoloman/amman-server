@@ -250,6 +250,8 @@ const user = await userSchema.findOne({ _id: req.params.userId })
     console.log('data in update',data)
 
     cartsCrud.update(id,data)
+    console.log('cartsCrud.update(id,data)',cartsCrud.update(id,data))
+
       .then(updatedProduct =>{
         console.log('updatedProduct ',updatedProduct)
 
@@ -260,8 +262,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
       
       });
     })
-
-
+ 
 
 /************************************************ORDER************************************************************/
 
@@ -381,7 +382,7 @@ function signIn(req,res,next){
   let foundError = ""
 
   if (!foundError){
-    console.log('!foundError',!foundError)
+    console.log('!foundError in signin',!foundError)
   res.send({  token: req.token });
         }else{
   res.status(500).send('the error in sign in route');
