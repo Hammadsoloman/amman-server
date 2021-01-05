@@ -153,7 +153,7 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
 
 /***************************************add to cart********************** */
 // ,bearer
-route.post('/cart/:userId',bearer, async (req, res) => {
+route.post('/cart/:userId', async (req, res) => {
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
   // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
@@ -203,7 +203,7 @@ route.post('/cart/:userId',bearer, async (req, res) => {
 
                                     /***********Get the cart for one user***********/
   // ,bearer
-route.get('/cart/:userId',bearer, async (req, res) => {
+route.get('/cart/:userId', async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'cart',
   );
@@ -226,7 +226,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
                                   /**********Delete one item in the cart for the user***********/
 
   //  ,bearer
-  route.delete('/cart/:userId/:itemId',bearer,  (req, res,next) => {
+  route.delete('/cart/:userId/:itemId',  (req, res,next) => {
     console.log('req.params',req.params.itemId)
     let id = req.params.itemId;
   // await productsSchema.findByIdAndDelete(req.params.cartId);
@@ -242,7 +242,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 
                                /**********Edit one item in the cart for the user***********/
 //  ,bearer
-  route.put('/cart/:userId/:itemId',bearer, (req, res) => {
+  route.put('/cart/:userId/:itemId', (req, res) => {
     console.log('req.params.itemIdId',req.params.itemId)
     let id = req.params.itemId;
     console.log('data in update',id)
@@ -265,7 +265,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
 /************************************************ORDER************************************************************/
 
 
-route.post('/order/:userId',bearer,async (req, res) => {
+route.post('/order/:userId',async (req, res) => {
 
   
   //Find a user
@@ -285,8 +285,8 @@ route.post('/order/:userId',bearer,async (req, res) => {
   const item = new orderSchema();
   console.log('item',item)
   console.log('req.body',req.body)
-    let newBody=req.body[0]
-    console.log('newBodyafter adding [0]',newBody)
+    let newBody=req.body
+    console.log('newBodyafter adding ',newBody)
   item.title = newBody.title;
   console.log('item.title',item.title)
   item.desc = newBody.desc;
@@ -300,19 +300,25 @@ route.post('/order/:userId',bearer,async (req, res) => {
   console.log('user',user)
   let foundError = ""
   await item.save()
-  .catch(()=>{
-    //res.status(500).send('error in the server when you save the item');
-    foundError = 'error in the server when you save the item'
-  });
+  console.log('item after save',item)
+
+  // .catch(()=>{
+  //   //res.status(500).send('error in the server when you save the item');
+  //   foundError = 'error in the server when you save the item'
+  // });
   
   // Associate user with cart
   // console.log('item.product', cart.products)
   user.order.push(item._id);
+  console.log('push item._id',item._id)
+
   await user.save()
-  .catch(()=>{
-    //res.status(500).send('error in the server when you save the item in the user');
-    foundError = 'error in the server when you save the user'
-  });
+  console.log('user after save',)
+
+  // .catch(()=>{
+  //   //res.status(500).send('error in the server when you save the item in the user');
+  //   foundError = 'error in the server when you save the user'
+  // });
 
   if ( !foundError )
     res.send(item);
@@ -324,7 +330,7 @@ route.post('/order/:userId',bearer,async (req, res) => {
 
                                     /***********Get the order for one user***********/
   // ,bearer
-route.get('/order/:userId', bearer,async (req, res) => {
+route.get('/order/:userId',async (req, res) => {
   const user = await userSchema.findOne({ _id: req.params.userId }).populate(
     'order',
   );
@@ -344,6 +350,7 @@ route.get('/order/:userId', bearer,async (req, res) => {
 
 });
 
+/*******************************edit the order******************************************************/
 
 
 /*****************************************************Auth***************************************/
