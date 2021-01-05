@@ -249,8 +249,7 @@ const user = await userSchema.findOne({ _id: req.params.userId })
     let data = req.body;
     console.log('data in update',data)
 
-    cartsCrud.update(id,data)
-    console.log('cartsCrud.update(id,data)',cartsCrud.update(id,data))
+    cartSchema.findByIdAndDelete(id,data)
 
       .then(updatedProduct =>{
         console.log('updatedProduct ',updatedProduct)
