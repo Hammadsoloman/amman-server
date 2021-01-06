@@ -9,7 +9,9 @@ const stripeChargeCallback = res => (stripeErr, stripeRes) => {
   };
 
 const paymentApi = app => {
+  console.log('in paymentApi in payment.js ')
     app.get("/payment", (req, res) => {
+      console.log('in paymentApi in payment.js in get ')
       res.send({
         message: "Hello Stripe checkout server!",
         timestamp: new Date().toISOString()
@@ -17,6 +19,7 @@ const paymentApi = app => {
     });
 
     app.post("/payment", (req, res) => {
+      console.log('in paymentApi in payment.js in post ')
         const body = {
           source: req.body.tokenInt.id,
           amount: req.body.amount,
