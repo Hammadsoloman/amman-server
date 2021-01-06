@@ -21,7 +21,7 @@ const paymentApi = app => {
     app.post("/payment", (req, res) => {
       console.log('in paymentApi in payment.js in post ')
         const body = {
-          source: req.body.tokenInt.id,
+          source: req.body.token.id,
           amount: req.body.amount,
           currency: "usd"
         };
