@@ -12,6 +12,8 @@ const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
 const cartSchema=require('../lib/models/cart/cart-schema')
 const orderSchema=require('../lib/models/order/order-schema')
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 route.post('/signup',signUp);
 // basicAuth
 route.post('/signin',basicAuth,signIn);
