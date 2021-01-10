@@ -308,10 +308,10 @@ route.post('/order/:userId',async (req, res) => {
   await item.save()
   console.log('item after save',item)
 
-  .catch(()=>{
-    //res.status(500).send('error in the server when you save the item');
-    foundError = 'error in the server when you save the item'
-  });
+  // .catch(()=>{
+  //   //res.status(500).send('error in the server when you save the item');
+  //   foundError = 'error in the server when you save the item'
+  // });
   
   // Associate user with cart
   // console.log('item.product', cart.products)
@@ -320,11 +320,17 @@ route.post('/order/:userId',async (req, res) => {
 
   await user.save()
   console.log('user after save',)
+/*
+UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'catch' of undefined.
 
-  .catch(()=>{
-    //res.status(500).send('error in the server when you save the item in the user');
-    foundError = 'error in the server when you save the user'
-  });
+Unhandled promise rejection. This error originated either by throwing inside of an async
+function without a catch block, or by rejecting a promise which was not handled with .catch().
+*/
+
+  // .catch(()=>{
+  //   //res.status(500).send('error in the server when you save the item in the user');
+  //   foundError = 'error in the server when you save the user'
+  // });
 
   if ( !foundError )
     res.send(item);
