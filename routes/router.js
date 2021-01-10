@@ -287,7 +287,7 @@ route.post('/order/:userId',async (req, res) => {
   const item = new orderSchema();
   console.log('item',item)
   console.log('req.body',req.body)
-    let newBody=req.body
+    let newBody=req.body[0]
     console.log('newBodyafter adding ',newBody)
   console.log('item.title',item.title)
   item.title = newBody.title;
