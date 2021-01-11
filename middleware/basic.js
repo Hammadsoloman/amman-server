@@ -29,7 +29,7 @@ module.exports = authSignIn;
 // 'use strict';
 
 // const userModel = require('../lib/models/user/users-model');
-// // const base64 = require('base-64');
+// const base64 = require('base-64');
 
 // function authSignIn(req,res,next){
 //   console.log('req.body in the basic auth', req.body)

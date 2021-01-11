@@ -13,6 +13,12 @@ const productsSchema=require('../lib/models/product/product-schema')
 const cartSchema=require('../lib/models/cart/cart-schema')
 const orderSchema=require('../lib/models/order/order-schema')
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const {attachPaymentMethod} = require("../utils/utils")
+// const { Router } = require("express");
+// const User = require("../database/models/User");
+// const { attachPaymentMethod } = require("../utils/stripe");
+
+// const router = Router();
 
 route.post('/signup',signUp);
 // basicAuth
@@ -362,15 +368,39 @@ route.get('/order/:userId',async (req, res) => {
 
 });
 
-/*******************************edit the order******************************************************/
+/****************************************************STRIPE***************************************************/
 
+
+route.post("/methods/create", async (req, res) => {
+  if (req.user) {
+    const { id } = req.body;
+    if (!id) return res.sendStatus(400);
+    const { customer } = req.user;
+    const result = await attachPaymentMethod({
+      customer: customer.stripeId,
+      id,
+    });
+    const update = await User.findOneAndUpdate(
+      { username: req.user.username },
+      {
+        $set: { "customer.defaultPaymentId": result.id },
+      },
+      {
+        new: true,
+      }
+    );
+    return res.send(update);
+  } else return res.sendStatus(401);
+});
 
 /*****************************************************Auth***************************************/
 function signUp(req,res,next){
   let newUser = req.body;
-  console.log('newUser',newUser)
+  console.log('newUser in signUp ',newUser)
   userModel.save(newUser)
     .then(result =>{
+      console.log('result in then signup',result)
+
       let token = userModel.generateToken(result);
       console.log('token in then signup',token)
 
