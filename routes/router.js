@@ -371,9 +371,10 @@ route.get('/order/:userId',async (req, res) => {
 /****************************************************STRIPE***************************************************/
 
 
-route.post("/methods/create", async (req, res) => {
+route.post("/payment/methods/create", async (req, res) => {
   console.log('in create payment route')
   console.log('req.user',req.user)
+  console.log('req.body',req.body)
 
   if (req.user) {
     console.log('req.user',req.body)
