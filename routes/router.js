@@ -373,10 +373,10 @@ route.get('/order/:userId',async (req, res) => {
 
 route.post("/payment/methods/create", async (req, res) => {
   console.log('in create payment route')
-  console.log('req.user',req.user)
+  console.log('req',req)
   console.log('req.body',req.body)
 
-  if (req.user) {
+  // if (req.user) {
     console.log('req.user',req.body)
     const { id } = req.body;
     if (!id) return res.sendStatus(400);
@@ -401,7 +401,8 @@ route.post("/payment/methods/create", async (req, res) => {
     console.log('update in post payment >>>>> to send it as a response',update)
 
     return res.send(update);
-  } else return res.sendStatus(401);
+  // }
+  //  else return res.sendStatus(401);
 });
 
 /*****************************************************Auth***************************************/
