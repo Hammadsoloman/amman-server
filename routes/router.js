@@ -372,15 +372,23 @@ route.get('/order/:userId',async (req, res) => {
 
 
 route.post("/methods/create", async (req, res) => {
+  console.log('in create payment route')
+  console.log('req.user',req.user)
+
   if (req.user) {
+    console.log('req.user',req.body)
     const { id } = req.body;
     if (!id) return res.sendStatus(400);
     const { customer } = req.user;
+    console.log('customer',req.user)
+
     const result = await attachPaymentMethod({
       customer: customer.stripeId,
       id,
     });
-    const update = await User.findOneAndUpdate(
+    console.log('result in post payment',result)
+
+    const update = await userSchema.findOneAndUpdate(
       { username: req.user.username },
       {
         $set: { "customer.defaultPaymentId": result.id },
@@ -389,6 +397,8 @@ route.post("/methods/create", async (req, res) => {
         new: true,
       }
     );
+    console.log('update in post payment >>>>> to send it as a response',update)
+
     return res.send(update);
   } else return res.sendStatus(401);
 });
