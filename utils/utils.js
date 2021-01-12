@@ -15,7 +15,7 @@ const attachPaymentMethod = async ({ customer, id }) =>
     customer,
   });
 
-// const createSubscription = ({ customer, payment, price }) => {
+// const createSubscription = ({ customer, payment, price }) => { 
 //   return stripe.subscriptions.create({
 //     items: [
 //       {

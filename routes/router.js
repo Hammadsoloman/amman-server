@@ -449,34 +449,35 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
     });
     console.log('result in post payment',result)
 
-  //   const update = await userSchema.findOneAndUpdate(
-  //     { username: req.user.username },
-  //     {
-  //       $set: { "customer.defaultPaymentId": result.id },
-  //     },
-  //     {
-  //       new: true,
-  //     }
-  //   );
-  //   console.log('update in post payment >>>>> to send it as a response',update)
+    const update =  user(
+      { username: user.username },
+      {
+        $set: { "customer.defaultPaymentId": result.id },
+      },
+      {
+        new: true,
+      }
+    );
+    console.log('update in post payment >>>>> to send it as a response',update)
 
-  //   return res.send(update);
+    return res.send(update);
 
-  let foundError = ""
+  // let foundError = ""
+  // console.log('item before save',item)
 
-  await item.save()
-  console.log('item after save',item)
+  // await item.save()
+  // console.log('item after save',item)
 
-  user.customer.defaultPaymentId.push(item._id);
-  console.log('push item._id',item._id)
+  // user.customer.defaultPaymentId.push(item._id);
+  // console.log('push item._id',item._id)
 
-  await user.save()
-  console.log('user after save')
+  // await user.save()
+  // console.log('user after save')
 
-  if ( !foundError )
-    res.send(item);
-  else
-    res.status(500).send('the error when you try to post the order');
+  // if ( !foundError )
+  //   res.send(item);
+  // else
+  //   res.status(500).send('the error when you try to post the order');
 
 
   // }
