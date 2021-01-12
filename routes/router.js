@@ -423,7 +423,7 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
   const item = new userSchema();
    
   console.log('user find from schema',user)
-  // console.log('item find from schema',item)
+  console.log('item find from schema',item)
 
   // let newBody=req.body
 
