@@ -423,14 +423,18 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
   const item = new userSchema();
    
   console.log('user find from schema',user)
-  console.log('item find from schema',item)
+  // console.log('item find from schema',item)
 
   // let newBody=req.body
 
   const { id } = req.body;
+  console.log('id',id)
+
   item.customer.stripeId = id;  
+  console.log('iditem.customer',item.customer)
+
   item.user = user._id;  
-  console.log('item after customer and user in item')
+  console.log('item after customer and user in item',item.user)
 
 
     if (!id) return res.sendStatus(400);
