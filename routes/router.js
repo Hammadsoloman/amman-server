@@ -413,7 +413,6 @@ route.get('/order/:userId',async (req, res) => {
   
 route.post("/payment/methods/create/:userId", async (req, res) => {
   console.log('in create payment route')
-  console.log('req',req)
   console.log('req.body',req.body)
 
   // i will send the username by the header, and the id by the body
@@ -422,13 +421,16 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
       //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
   const item = new userSchema();
+   
+  console.log('user find from schema',user)
+  console.log('item find from schema',item)
 
-  console.log('req.user',req.body)
   // let newBody=req.body
 
   const { id } = req.body;
   item.customer.stripeId = id;  
   item.user = user._id;  
+  console.log('item after customer and user in item')
 
 
     if (!id) return res.sendStatus(400);
