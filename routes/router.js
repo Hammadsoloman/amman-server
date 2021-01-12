@@ -449,7 +449,7 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
     });
     console.log('result in post payment',result)
 
-    const update =  user(
+    const updatedUser =  [
       { username: user.username },
       {
         $set: { "customer.defaultPaymentId": result.id },
@@ -457,10 +457,13 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
       {
         new: true,
       }
-    );
-    console.log('update in post payment >>>>> to send it as a response',update)
+    ]
+    
+    
+  
+    console.log('update in post payment >>>>> to send it as a response',updatedUser)
 
-    return res.send(update);
+    return res.send(updatedUser);
 
   // let foundError = ""
   // console.log('item before save',item)
