@@ -14,6 +14,7 @@ const cartSchema=require('../lib/models/cart/cart-schema')
 const orderSchema=require('../lib/models/order/order-schema')
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const {attachPaymentMethod} = require("../utils/utils")
+const CustomerSchema = require('../lib/models/payment/payment-schema')
 // const { Router } = require("express");
 // const User = require("../database/models/User");
 // const { attachPaymentMethod } = require("../utils/stripe");
@@ -371,17 +372,68 @@ route.get('/order/:userId',async (req, res) => {
 /****************************************************STRIPE***************************************************/
 
 
-route.post("/payment/methods/create", async (req, res) => {
+// route.post("/payment/methods/create", async (req, res) => {
+//   console.log('in create payment route')
+//   console.log('req',req)
+//   console.log('req.body',req.body)
+
+//   // i will send the username by the header, and the id by the body
+//   // if (req.user) {
+//     console.log('req.user',req.body)
+//     const { id } = req.body;
+//     if (!id) return res.sendStatus(400);
+//     const { customer } = req.user;
+//     console.log('customer',req.user)
+
+//     const result = await attachPaymentMethod({
+//       customer: customer.stripeId,
+//       id,
+//     });
+//     console.log('result in post payment',result)
+
+//     const update = await userSchema.findOneAndUpdate(
+//       { username: req.user.username },
+//       {
+//         $set: { "customer.defaultPaymentId": result.id },
+//       },
+//       {
+//         new: true,
+//       }
+//     );
+//     console.log('update in post payment >>>>> to send it as a response',update)
+
+//     return res.send(update);
+//   // }
+//   //  else return res.sendStatus(401);
+// });
+
+
+
+
+  
+route.post("/payment/methods/create/:userId", async (req, res) => {
   console.log('in create payment route')
   console.log('req',req)
   console.log('req.body',req.body)
 
+  // i will send the username by the header, and the id by the body
   // if (req.user) {
-    console.log('req.user',req.body)
-    const { id } = req.body;
+
+      //Find a user
+  const user = await userSchema.findOne({ _id: req.params.userId });
+  const item = new userSchema();
+
+  console.log('req.user',req.body)
+  // let newBody=req.body
+
+  const { id } = req.body;
+  item.customer.stripeId = id;  
+  item.user = user._id;  
+
+
     if (!id) return res.sendStatus(400);
-    const { customer } = req.user;
-    console.log('customer',req.user)
+    const { customer } = user.customer;
+    console.log('customer',user.customer)
 
     const result = await attachPaymentMethod({
       customer: customer.stripeId,
@@ -389,18 +441,36 @@ route.post("/payment/methods/create", async (req, res) => {
     });
     console.log('result in post payment',result)
 
-    const update = await userSchema.findOneAndUpdate(
-      { username: req.user.username },
-      {
-        $set: { "customer.defaultPaymentId": result.id },
-      },
-      {
-        new: true,
-      }
-    );
-    console.log('update in post payment >>>>> to send it as a response',update)
+  //   const update = await userSchema.findOneAndUpdate(
+  //     { username: req.user.username },
+  //     {
+  //       $set: { "customer.defaultPaymentId": result.id },
+  //     },
+  //     {
+  //       new: true,
+  //     }
+  //   );
+  //   console.log('update in post payment >>>>> to send it as a response',update)
 
-    return res.send(update);
+  //   return res.send(update);
+
+  let foundError = ""
+
+  await item.save()
+  console.log('item after save',item)
+
+  user.customer.defaultPaymentId.push(item._id);
+  console.log('push item._id',item._id)
+
+  await user.save()
+  console.log('user after save')
+
+  if ( !foundError )
+    res.send(item);
+  else
+    res.status(500).send('the error when you try to post the order');
+
+
   // }
   //  else return res.sendStatus(401);
 });
@@ -411,7 +481,7 @@ function signUp(req,res,next){
   console.log('newUser in signUp ',newUser)
   userModel.save(newUser)
     .then(result =>{
-      console.log('result in then signup',result)
+      console.log('result in then signup',result) 
 
       let token = userModel.generateToken(result);
       console.log('token in then signup',token)
