@@ -444,7 +444,7 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
     console.log('customer',user.customer)
 
     const result = await attachPaymentMethod({
-      customer: customer.stripeId,
+      customer: user.customer.stripeId,
       id,
     });
     console.log('result in post payment',result)
