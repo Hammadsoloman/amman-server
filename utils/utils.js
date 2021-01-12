@@ -11,6 +11,7 @@ const createStripeCustomer = async ({ username }) => {
 };
 
 const attachPaymentMethod = async ({ customer, id }) =>
+console.log('custemoer, id',id,customer )
   stripe.paymentMethods.attach(id, {
     customer,
   });

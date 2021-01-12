@@ -430,6 +430,8 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
   const { id } = req.body;
   console.log('id',id)
 
+  console.log('item.customer',item.customer)
+
   item.customer.stripeId = id;  
   console.log('iditem.customer',item.customer)
 
