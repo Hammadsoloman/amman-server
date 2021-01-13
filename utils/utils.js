@@ -15,20 +15,20 @@ const attachPaymentMethod = async ({ customer, id }) =>
     customer,
   });
 
-// const createSubscription = ({ customer, payment, price }) => { 
-//   return stripe.subscriptions.create({
-//     items: [
-//       {
-//         price,
-//       },
-//     ],
-//     customer,
-//     default_payment_method: payment,
-//   });
-// };
+const createSubscription = ({ customer, payment, price }) => { 
+  return stripe.subscriptions.create({
+    items: [
+      {
+        price,
+      },
+    ],
+    customer,
+    default_payment_method: payment,
+  });
+};
 
 module.exports = {
   createStripeCustomer,
   attachPaymentMethod,
-  // createSubscription,
+  createSubscription,
 };

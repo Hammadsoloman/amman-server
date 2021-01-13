@@ -15,6 +15,11 @@ const orderSchema=require('../lib/models/order/order-schema')
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const {attachPaymentMethod} = require("../utils/utils")
 const CustomerSchema = require('../lib/models/payment/payment-schema')
+// var expressValidator = require('express-validator');
+const { check, validationResult } = require('express-validator')
+const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
+
+
 // const { Router } = require("express");
 // const User = require("../database/models/User");
 // const { attachPaymentMethod } = require("../utils/stripe");
@@ -35,6 +40,11 @@ route.get('/users',allUsers);
 route.post('/product',bearer,postProduct);
 function postProduct(req, res,next){
   let data = req.body;
+
+  if (!data.title || !data.desc || !data.price) {
+    throw new BadRequest('Missing required fields: title or desc or price');
+  }
+
   productsCrud.create(data)
     .then(productAdded=>{
       res.json(productAdded);
@@ -64,6 +74,10 @@ function getAllProducts(req, res,next){
 route.get('/product/:id',bearer,getByIdProduct);
 function getByIdProduct(req, res,next){
   let id = req.params.id;
+  if (!id) {
+    throw new NotFound('The id for this pagw not found');
+  }
+
   productsCrud.get(id)
     .then(productId =>{
       res.json(productId);
@@ -78,6 +92,10 @@ function getByIdProduct(req, res,next){
 route.put('/product/:id',bearer,updatedProductById);
 function updatedProductById(req, res,next){
   let id = req.params.id;
+  if (!id) {
+    throw new NotFound('The id for this pagw not found');
+  }
+
   let data = req.body;
   productsCrud.update(id,data)
     .then(updatedProduct =>{
@@ -105,7 +123,7 @@ function deleteProduct(req, res,next){
 
 /***************************************** ADMIN CRUD METHODS ****************************************************/
 // ,bearer,permissions('admin')
-route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
+route.put('/select/:id',editOneProduct);
   function editOneProduct(req, res,next)  {
     productsCrud 
       .update(req.params.id,req.body)
@@ -115,7 +133,7 @@ route.put('/select/:id',bearer,permissions('admin'),editOneProduct);
       }); 
   }
   // ,bearer,permissions('admin')
-  route.get('/selectAll',bearer,permissions('admin'),getAllProductAdmin,);
+  route.get('/selectAll',getAllProductAdmin,);
   function getAllProductAdmin(req, res, next) {
     productsCrud
       .get()
@@ -279,6 +297,12 @@ route.post('/order/:userId',async (req, res) => {
   
   //Find a user
   const user = await userSchema.findOne({ _id: req.params.userId });
+
+  if (!user) {
+    throw new NotAuthorized('You are Not Authorized to do this order');
+  }
+
+  
   // const itemInCart = await cartSchema.findOne({ _id: req.body.title});
   // let itemInCart= state.cartItem.findOne({ _id: req.body.id })
   console.log('user',user)
@@ -487,9 +511,33 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
   //  else return res.sendStatus(401);
 });
 
+
+
+route.post("/create/:userId", async (req, res) => {
+  const { priceId } = req.body;
+
+  const user = await userSchema.findOne({ _id: req.params.userId });
+  // const item = new userSchema();
+
+  const response = await createSubscription({
+    customer: user.customer.stripeId,
+    payment: user.customer.defaultPaymentId,
+    price: priceId,
+  });
+  res.send(response);
+});
+
+
 /*****************************************************Auth***************************************/
 function signUp(req,res,next){
   let newUser = req.body;
+
+  if (!newUser.username || !newUser.password ) {
+    throw new BadRequest('Missing required fields: username or password');
+  }
+
+
+
   console.log('newUser in signUp ',newUser)
   userModel.save(newUser)
     .then(result =>{
@@ -505,7 +553,7 @@ function signUp(req,res,next){
       res.status(200).send({  token: token });
     })
     .catch(()=>{
-      res.status(403).send('Invalid Signup! This userName is taken');
+      res.status(403).send('Invalid Signup!');
 
     });
 
