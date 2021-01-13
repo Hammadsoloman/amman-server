@@ -508,10 +508,12 @@ route.post("/create/:userId", async (req, res) => {
 
 /*******************************************************Create stripe*****************************/
 route.post("/stripe_payments", (req, res) => {
-  const { product, token } = req.body;
+  const  token  = req.body.token;
+  const  amount = req.body.amount;
+
   console.log("req.body stripe_payments", req.body);
-  console.log("PRODUCT stripe_payments", product);
-  console.log("PRICE stripe_payments", product.price);
+  console.log("amount stripe_payments", amount);
+  // console.log("amount stripe_payments", product.price);
   const idempontencyKey = uuid();
 
   return stripe.customers
@@ -523,11 +525,11 @@ route.post("/stripe_payments", (req, res) => {
         console.log('customer in stripe_payment',customer)
           stripe.charges.create(
               {
-                  amount: product.price * 100,
-                  currency: "INR",
+                  amount: amount,
+                  currency: "Inspire LLC",
                   customer: customer.id,
                   receipt_email: token.email,
-                  description: `purchase of ${product.name}`,
+                  // description: `purchase of ${product.name}`,
                   shipping: {
                       name: token.card.name,
                       address: {
