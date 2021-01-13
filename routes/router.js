@@ -16,7 +16,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const {attachPaymentMethod} = require("../utils/utils")
 const CustomerSchema = require('../lib/models/payment/payment-schema')
 // var expressValidator = require('express-validator');
-const { check, validationResult } = require('express-validator')
+// const { check, validationResult } = require('express-validator')
+const uuid = require("uuidv4");
 const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
 
 
@@ -66,7 +67,7 @@ function getAllProducts(req, res,next){
       res.status(500).send('error in the server when you get all the item in product page');
     
     });
-}
+} 
 
 
 //find category By Id (GET)
@@ -482,33 +483,10 @@ route.post("/payment/methods/create/:userId", async (req, res) => {
         new: true,
       }
     ]
-    
-    
-  
     console.log('update in post payment >>>>> to send it as a response',updatedUser)
 
     return res.send(updatedUser);
 
-  // let foundError = ""
-  // console.log('item before save',item)
-
-  // await item.save()
-  // console.log('item after save',item)
-
-  // user.customer.defaultPaymentId.push(item._id);
-  // console.log('push item._id',item._id)
-
-  // await user.save()
-  // console.log('user after save')
-
-  // if ( !foundError )
-  //   res.send(item);
-  // else
-  //   res.status(500).send('the error when you try to post the order');
-
-
-  // }
-  //  else return res.sendStatus(401);
 });
 
 
@@ -525,6 +503,43 @@ route.post("/create/:userId", async (req, res) => {
     price: priceId,
   });
   res.send(response);
+});
+
+
+/*******************************************************Create stripe*****************************/
+app.post("/stripe_payments", (req, res) => {
+  const { product, token } = req.body;
+  console.log("req.body ", req.body);
+  console.log("PRODUCT ", product);
+  console.log("PRICE ", product.price);
+  const idempontencyKey = uuid();
+
+  return stripe.customers
+      .create({
+          email: token.email,
+          source: token.id
+      })
+      .then(customer => {
+        console.log('customer in stripe_payment',customer)
+          stripe.charges.create(
+              {
+                  amount: product.price * 100,
+                  currency: "INR",
+                  customer: customer.id,
+                  receipt_email: token.email,
+                  description: `purchase of ${product.name}`,
+                  shipping: {
+                      name: token.card.name,
+                      address: {
+                          country: token.card.address_country
+                      }
+                  }
+              },
+              { idempontencyKey }
+          );
+      })
+      .then(result => res.status(200).json(result))
+      .catch(err => console.log(err));
 });
 
 
