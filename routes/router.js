@@ -507,7 +507,7 @@ route.post("/create/:userId", async (req, res) => {
 
 
 /*******************************************************Create stripe*****************************/
-app.post("/stripe_payments", (req, res) => {
+route.post("/stripe_payments", (req, res) => {
   const { product, token } = req.body;
   console.log("req.body ", req.body);
   console.log("PRODUCT ", product);
