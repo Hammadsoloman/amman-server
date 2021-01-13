@@ -509,9 +509,9 @@ route.post("/create/:userId", async (req, res) => {
 /*******************************************************Create stripe*****************************/
 route.post("/stripe_payments", (req, res) => {
   const { product, token } = req.body;
-  console.log("req.body ", req.body);
-  console.log("PRODUCT ", product);
-  console.log("PRICE ", product.price);
+  console.log("req.body stripe_payments", req.body);
+  console.log("PRODUCT stripe_payments", product);
+  console.log("PRICE stripe_payments", product.price);
   const idempontencyKey = uuid();
 
   return stripe.customers
