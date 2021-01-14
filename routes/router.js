@@ -17,7 +17,8 @@ const {attachPaymentMethod} = require("../utils/utils")
 const CustomerSchema = require('../lib/models/payment/payment-schema')
 // var expressValidator = require('express-validator');
 // const { check, validationResult } = require('express-validator')
-const uuid = require("uuidv4");
+const {v4 : uuidv4} = require('uuid')
+
 const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
 
 
@@ -513,9 +514,11 @@ route.post("/stripe_payments", (req, res) => {
 
   console.log("req.body stripe_payments", req.body);
   console.log("amount stripe_payments", amount);
-  // console.log("amount stripe_payments", product.price);
+  console.log("amount stripe_payments", product.price);
   // const idempontencyKey = uuid();
   // console.log('idempontencyKey',idempontencyKey)
+  const idempontencyKey = uuidv4()
+
   var stripe = require("stripe")(
     "sk_test_51I6GFrAAyiIKrt7bV0ujpx8Na80sPOiyEaVnm4U8sRqWON8sYdQlATgg8Cr9pZEZzmQtyXLOjeseZNGOfSZojVV300mA4IiLIn"
     );
