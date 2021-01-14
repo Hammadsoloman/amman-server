@@ -10,25 +10,34 @@ const createStripeCustomer = async ({ username }) => {
   return data.length === 0 ? stripe.customers.create({ username }) : data[0];
 };
 
-const attachPaymentMethod = async ({ customer, id }) =>
-  stripe.paymentMethods.attach(id, {
-    customer,
-  });
 
-const createSubscription = ({ customer, payment, price }) => { 
-  return stripe.subscriptions.create({
-    items: [
-      {
-        price,
-      },
-    ],
-    customer,
-    default_payment_method: payment,
-  });
-};
 
 module.exports = {
   createStripeCustomer,
-  attachPaymentMethod,
-  createSubscription,
+  
 };
+
+
+
+
+// const attachPaymentMethod = async ({ customer, id }) =>
+//   stripe.paymentMethods.attach(id, {
+//     customer,
+//   });
+
+// const createSubscription = ({ customer, payment, price }) => { 
+//   return stripe.subscriptions.create({
+//     items: [
+//       {
+//         price,
+//       },
+//     ],
+//     customer,
+//     default_payment_method: payment,
+//   });
+// };
+
+
+
+// attachPaymentMethod,
+//   createSubscription,

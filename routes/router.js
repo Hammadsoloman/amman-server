@@ -529,7 +529,9 @@ route.post("/stripe_payments", (req, res) => {
   .create({
     email: token.email,
     source: token.id
-  })
+  }
+)
+
   .then(customer => {
         console.log('customers in then in the backend')
         console.log('customer in stripe_payment',customer)
@@ -548,11 +550,23 @@ route.post("/stripe_payments", (req, res) => {
                   }
               },
               { idempontencyKey:token.id }
-          );
+          )
+          const payment = new CustomerSchema({
+            amount: amount,
+            receipt_email:  token.email,
+            address: token.card.address_country,
+            name: token.card.name,
+          });
+          console.log('payment',payment)
+          payment.save();
       })
+
       .then(result => res.status(200).json(result))
       .catch(err => console.log(err));
 });
+
+// await user.save()
+// console.log('user after save',)
 
 
 /*****************************************************Auth***************************************/
