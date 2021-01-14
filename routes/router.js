@@ -515,13 +515,14 @@ route.post("/stripe_payments", (req, res) => {
   console.log("amount stripe_payments", amount);
   // console.log("amount stripe_payments", product.price);
   const idempontencyKey = uuid();
-
+  console.log('stripe.customers',stripe.customers)
   return stripe.customers
-      .create({
-          email: token.email,
-          source: token.id
-      })
-      .then(customer => {
+  .create({
+    email: token.email,
+    source: token.id
+  })
+  .then(customer => {
+        console.log('customers in then in the backend')
         console.log('customer in stripe_payment',customer)
           stripe.charges.create(
               {
