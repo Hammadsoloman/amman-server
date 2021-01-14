@@ -514,7 +514,6 @@ route.post("/stripe_payments", (req, res) => {
 
   console.log("req.body stripe_payments", req.body);
   console.log("amount stripe_payments", amount);
-  console.log("amount stripe_payments", product.price);
   // const idempontencyKey = uuid();
   // console.log('idempontencyKey',idempontencyKey)
   // const idempontencyKey = Date.now()
