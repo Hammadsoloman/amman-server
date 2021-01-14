@@ -515,9 +515,12 @@ route.post("/stripe_payments", (req, res) => {
   console.log("amount stripe_payments", amount);
   // console.log("amount stripe_payments", product.price);
   const idempontencyKey = uuid();
+  console.log('idempontencyKey',idempontencyKey)
   var stripe = require("stripe")(
     "sk_test_51I6GFrAAyiIKrt7bV0ujpx8Na80sPOiyEaVnm4U8sRqWON8sYdQlATgg8Cr9pZEZzmQtyXLOjeseZNGOfSZojVV300mA4IiLIn"
     );
+    console.log('stripe',stripe)
+
     console.log('stripe.customers',stripe.customers)
 
   return stripe.customers
