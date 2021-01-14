@@ -17,7 +17,7 @@ const {attachPaymentMethod} = require("../utils/utils")
 const CustomerSchema = require('../lib/models/payment/payment-schema')
 // var expressValidator = require('express-validator');
 // const { check, validationResult } = require('express-validator')
-const {v4 : uuidv4} = require('uuid')
+const uuidv4 = require("uuid/v4")
 
 const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
 
