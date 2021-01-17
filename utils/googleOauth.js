@@ -11,9 +11,9 @@ const client = new OAuth2Client(
   'postmessage'
 );
 
-const getProfileInfo = async (code,res,next) => {
+const getProfileInfo = async (req,res,next) => {
   // function authSignIn (req,res,next){
-  const r = await client.getToken(code);
+  const r = await client.getToken(req.body.code);
   console.log('code in getProfileInfo',code)
   const idToken = r.tokens.id_token;
   console.log('idToken in getProfileInfo',idToken)
