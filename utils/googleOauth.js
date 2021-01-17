@@ -13,15 +13,21 @@ const client = new OAuth2Client(
 
 exports.getProfileInfo = async (code) => {
   const r = await client.getToken(code);
+  console.log('code in getProfileInfo',code)
   const idToken = r.tokens.id_token;
+  console.log('idToken in getProfileInfo',idToken)
 
   const ticket = await client.verifyIdToken({
     idToken,
     audience:
       '858745528998-k25f4loe94h6do3urm348113um884es2.apps.googleusercontent.com',
   });
+  console.log('ticket in getProfileInfo',ticket)
+
 
   const payload = ticket.getPayload();
+  console.log('payload in getProfileInfo',payload)
+
 
   return payload;
 };

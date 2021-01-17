@@ -636,6 +636,7 @@ route.post("/login",  async (req, res) => {
     console.log('req.body in googleLogin',req.body)
     const code = req.body.code;
     const profile = await googleOAuth.getProfileInfo(code);
+    console.log('profile in post',profile)
 
     const user = {
       
