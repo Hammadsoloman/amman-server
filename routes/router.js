@@ -33,7 +33,7 @@ const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
 route.post('/signup',signUp);
 // basicAuth
 route.post('/signin',basicAuth,signIn);
-route.post('/signin',googleOAuth,OAuth);
+route.post('/OAuth',googleOAuth,OAuth);
 
 route.get('/users',allUsers);
 
