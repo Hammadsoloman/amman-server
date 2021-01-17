@@ -32,7 +32,7 @@ const getProfileInfo = async (req,res,next) => {
 
   const payload = ticket.getPayload();
   console.log('payload in getProfileInfo',payload)
-  let user = payload.name;
+  let user = payload['name'];
 
   userModel.authenticateOAuth(user)
   .then(result =>{
