@@ -1,5 +1,5 @@
 const { OAuth2Client } = require('google-auth-library');
-
+const userModel = require('../lib/models/user/users-model')
 const client = new OAuth2Client(
   '858745528998-k25f4loe94h6do3urm348113um884es2.apps.googleusercontent.com',
   'zteEn8-Vwwe_vJXCSCL6p5sf',
@@ -11,7 +11,8 @@ const client = new OAuth2Client(
   'postmessage'
 );
 
-exports.getProfileInfo = async (code) => {
+const getProfileInfo = async (code,res,next) => {
+  // function authSignIn (req,res,next){
   const r = await client.getToken(code);
   console.log('code in getProfileInfo',code)
   const idToken = r.tokens.id_token;
@@ -27,7 +28,29 @@ exports.getProfileInfo = async (code) => {
 
   const payload = ticket.getPayload();
   console.log('payload in getProfileInfo',payload)
+  let user = payload.name;
 
+  userModel.authenticateOAuth(user)
+  .then(result =>{
+    console.log('result in getProfileInfo',result)
 
-  return payload;
+    req.token = userModel.generateTokenOAuth(result[0]);
+    console.log('req.token in getProfileInfo',req.token)
+
+    next();
+  })
+  .catch(err=>{
+    console.log('the error in bearer is ',err);
+    next('Your Input is uncorrect');
+  });
+  
+  // let token = jwt.sign({username: payload.name, role:user.role },SECRET,{
+  //   expiresIn: '1d',
+  // });
+  // console.log('token in generate token')
+  // return token;
+
 };
+
+module.exports = getProfileInfo;
+

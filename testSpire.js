@@ -48,7 +48,8 @@
 
 
 
-
+// let token = jwt.sign({username: payload.name, role:user.role },SECRET,{
+//     expiresIn: '1d',
 
 
 

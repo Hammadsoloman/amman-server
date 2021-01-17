@@ -33,6 +33,8 @@ const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
 route.post('/signup',signUp);
 // basicAuth
 route.post('/signin',basicAuth,signIn);
+route.post('/signin',googleOAuth,OAuth);
+
 route.get('/users',allUsers);
 
 
@@ -629,32 +631,47 @@ function signIn(req,res,next){
 
 // router.post('/google', authController.login);
 
-route.post("/login",  async (req, res) => {
+// route.post("/login", googleOAuth, async (req, res) => {
 
-// exports.login = async (req, res) => {
-  try {
-    console.log('req.body in googleLogin',req.body)
-    const code = req.body.code;
-    const profile = await googleOAuth.getProfileInfo(code);
-    console.log('profile in post',profile)
+  function OAuth(req,res,next){
+// // exports.login = async (req, res) => {
+//   try {
+//     console.log('req.body in googleLogin',req.body)
+//     const code = req.body.code;
+//     const profile = await googleOAuth.getProfileInfo(code);
+//     console.log('profile in post',profile)
 
-    const user = {
+//     const user = {
       
-      googleId: profile.sub,
-      name: profile.name,
-      // firstName: profile.given_name,
-      // lastName: profile.family_name,
-      // email: profile.email,
-      // profilePic: profile.picture,
-    };
-    console.log('user in googleOauth',user)
+//       googleId: profile.sub,
+//       name: profile.name,
+//       // firstName: profile.given_name,
+//       // lastName: profile.family_name,
+//       // email: profile.email,
+//       // profilePic: profile.picture,
+//     };
+//     console.log('user in googleOauth',user)
 
-    res.send({ user });
-  } catch (e) {
-    console.log(e);
-    res.status(401).send();
-  }
+//     res.send({ user });
+//   } catch (e) {
+//     console.log(e);
+//     res.status(401).send();
+//   }
+console.log('req.token in google oauth signin',req.token)
+res.cookie('token', req.token, {
+  expires  : new Date(Date.now() + 9999999),
+  httpOnly : false,
 });
+
+let foundError = ""
+
+if (!foundError){
+  console.log('!foundError in signin',!foundError)
+res.send({  token: req.token });
+      }else{
+res.status(500).send('the error in sign in route');
+ }
+}
 
 
 /****************************************************************************************/
