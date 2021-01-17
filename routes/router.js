@@ -629,14 +629,16 @@ function signIn(req,res,next){
 
 // router.post('/google', authController.login);
 
-route.post("/google",  async (req, res) => {
+route.post("/login",  async (req, res) => {
 
 // exports.login = async (req, res) => {
   try {
+    console.log('req.body in googleLogin',req.body)
     const code = req.body.code;
     const profile = await googleOAuth.getProfileInfo(code);
 
     const user = {
+      
       googleId: profile.sub,
       name: profile.name,
       // firstName: profile.given_name,
@@ -644,6 +646,7 @@ route.post("/google",  async (req, res) => {
       // email: profile.email,
       // profilePic: profile.picture,
     };
+    console.log('user in googleOauth',user)
 
     res.send({ user });
   } catch (e) {
