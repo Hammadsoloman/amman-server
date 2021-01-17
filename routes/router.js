@@ -18,6 +18,8 @@ const CustomerSchema = require('../lib/models/payment/payment-schema')
 // var expressValidator = require('express-validator');
 // const { check, validationResult } = require('express-validator')
 // const uuidv4 = require("uuid/v4")
+const googleOAuth = require('../utils/googleOauth');
+
 
 const { BadRequest, NotFound, NotAuthorized } = require('../utils/errors');
 
@@ -508,7 +510,7 @@ route.post("/create/:userId", async (req, res) => {
 
 
 /*******************************************************Create stripe*****************************/
-route.post("/stripe_payments", (req, res) => {
+route.post("/stripe_payments",  (req, res) => {
   const  token  = req.body.token;
   const  amount = req.body.amount;
 
@@ -559,14 +561,14 @@ route.post("/stripe_payments", (req, res) => {
           });
           console.log('payment',payment)
           payment.save();
-      })
+          
+        })
 
       .then(result => res.status(200).json(result))
       .catch(err => console.log(err));
 });
 
-// await user.save()
-// console.log('user after save',)
+
 
 
 /*****************************************************Auth***************************************/
@@ -623,6 +625,35 @@ function signIn(req,res,next){
   // res.status(500).send('the error in sign in route');
 
 }
+/**************************************************Google Oauth***************************/
+
+// router.post('/google', authController.login);
+
+route.post("/google",  async (req, res) => {
+
+// exports.login = async (req, res) => {
+  try {
+    const code = req.body.code;
+    const profile = await googleOAuth.getProfileInfo(code);
+
+    const user = {
+      googleId: profile.sub,
+      name: profile.name,
+      // firstName: profile.given_name,
+      // lastName: profile.family_name,
+      // email: profile.email,
+      // profilePic: profile.picture,
+    };
+
+    res.send({ user });
+  } catch (e) {
+    console.log(e);
+    res.status(401).send();
+  }
+});
+
+
+/****************************************************************************************/
 
 // get all users
 function allUsers(req,res,next){
