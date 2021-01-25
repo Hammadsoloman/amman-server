@@ -7,6 +7,7 @@ const basicAuth = require('../middleware/basic');
 const bearer = require('../middleware/bearer');
 const permissions=require('../middleware/permissions')
 const productsCrud = require('../lib/models/product/product-collection');
+const categoriesCrud = require('../lib/models/categories/categories-collection');
 const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
@@ -47,7 +48,7 @@ route.post('/product',bearer,postProduct);
 function postProduct(req, res,next){
   let data = req.body;
 
-  if (!data.title || !data.desc || !data.price) {
+  if (!data.title || !data.desc || !data.price ||!data.category) {
     throw new BadRequest('Missing required fields: title or desc or price');
   }
 
@@ -75,7 +76,6 @@ function getAllProducts(req, res,next){
 } 
 
 
-//find category By Id (GET)
 // ,bearer
 route.get('/product/:id',bearer,getByIdProduct);
 function getByIdProduct(req, res,next){
@@ -126,6 +126,19 @@ function deleteProduct(req, res,next){
     });
 }
 
+route.get('/categories',getCategories);
+function getAllProducts(req, res,next){
+  categoriesCrud.get()
+  
+    .then(allCategories =>{
+      res.json(allCategories);
+    })
+    .catch(()=>{
+      res.status(500).send('error in the server when you get all the Categories in product page');
+    
+    });
+} 
+
 
 /***************************************** ADMIN CRUD METHODS ****************************************************/
 // ,bearer,permissions('admin')
@@ -139,7 +152,7 @@ route.put('/select/:id',editOneProduct);
       }); 
   }
   // ,bearer,permissions('admin')
-  route.get('/selectAll',getAllProductAdmin,);
+  route.get('/selectAll',bearer,permissions('admin'),getAllProductAdmin,);
   function getAllProductAdmin(req, res, next) {
     productsCrud
       .get()
