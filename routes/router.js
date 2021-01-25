@@ -54,6 +54,7 @@ function postProduct(req, res,next){
 
   productsCrud.create(data)
     .then(productAdded=>{
+      console.log('productAdded',productAdded)
       res.json(productAdded);
     })
     .catch(()=>{
@@ -138,6 +139,25 @@ function getCategories(req, res,next){
     
     });
 } 
+
+route.post('/categories',addCategories);
+function addCategories(req, res,next){
+  let data = req.body;
+
+  if (!data.displayName) {
+    throw new BadRequest('Missing required fields: title or desc or price');
+  }
+
+  categoriesCrud.create(data)
+    .then(categoriesAdded=>{
+      console.log('categoriesAdded',categoriesAdded)
+      res.json(categoriesAdded);
+    })
+    .catch(()=>{
+      res.status(500).send('error in the server when you add new item');
+    
+    });
+}
 
 
 /***************************************** ADMIN CRUD METHODS ****************************************************/
