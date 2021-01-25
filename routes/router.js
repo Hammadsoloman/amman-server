@@ -127,7 +127,7 @@ function deleteProduct(req, res,next){
 }
 
 route.get('/categories',getCategories);
-function getAllProducts(req, res,next){
+function getCategories(req, res,next){
   categoriesCrud.get()
   
     .then(allCategories =>{
