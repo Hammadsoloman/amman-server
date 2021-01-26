@@ -44,9 +44,10 @@ route.get('/users',allUsers);
 /***************************************************PRODUCT CRUD METHODS**************************************/
 
 // ,bearer
-route.post('/product',bearer,postProduct);
+route.post('/product',postProduct);
 function postProduct(req, res,next){
   let data = req.body;
+  console.log('data in post new product',data)
 
   if (!data.title || !data.desc || !data.price ||!data.category) {
     throw new BadRequest('Missing required fields: title or desc or price');
