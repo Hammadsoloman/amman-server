@@ -8,6 +8,7 @@ const bearer = require('../middleware/bearer');
 const permissions=require('../middleware/permissions')
 const productsCrud = require('../lib/models/product/product-collection');
 const categoriesCrud = require('../lib/models/categories/categories-collection');
+const categoriesSchema = require('../lib/models/categories/categories-schema');
 const cartsCrud = require('../lib/models/cart/cart-collection');
 const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
@@ -128,11 +129,15 @@ function deleteProduct(req, res,next){
     });
 }
 
+
+          /**************************************Category************************************/
+
 route.get('/categories',getCategories);
 function getCategories(req, res,next){
   categoriesCrud.get()
   
     .then(allCategories =>{
+
       res.json(allCategories);
     })
     .catch(()=>{
@@ -141,23 +146,141 @@ function getCategories(req, res,next){
     });
 } 
 
+route.get('/categories/:id',getOneCategories);
+function getOneCategories(req, res,next){
+
+  let id = req.params.id;
+  if (!id) {
+    throw new NotFound('The id for this pagw not found');
+  }
+
+  categoriesCrud.get(id)
+    .then(oneCategory =>{
+      res.json(oneCategory);
+    })
+    .catch(()=>{
+      res.status(500).send('error in the server when you oneCategory');
+    
+    });
+}
+
 route.post('/categories',addCategories);
 function addCategories(req, res,next){
   let data = req.body;
+  let sub = req.body.sub;
+
+  console.log('data in categories',data)
+  console.log('sub in categories',sub)
+
 
   if (!data.displayName) {
     throw new BadRequest('Missing required fields: title or desc or price');
   }
+  return categoriesSchema.find({displayName: data.displayName})
+  .then(async result=>{
+    console.log('result in categories',result)
 
-  categoriesCrud.create(data)
+    if(!result[0]){
+    categoriesCrud.create(data)
     .then(categoriesAdded=>{
-      console.log('categoriesAdded',categoriesAdded)
+      console.log('categoriesAdded after check result',categoriesAdded)
       res.json(categoriesAdded);
     })
     .catch(()=>{
-      res.status(500).send('error in the server when you add new item');
+      res.status(500).send('error in the server when you add new Category');
     
     });
+  }
+  else{
+    console.log('else in categories')
+    
+    let id = result[0]._id
+    console.log('id in else',id)
+    categoriesCrud.update(id,data)
+    .then(updatedCategory =>{
+      console.log('updatedCategory in categories',updatedCategory)
+      res.json(updatedCategory);
+    })
+    .catch(()=>{
+      res.status(500).send('error in the server when you updatedCategory');
+    
+    });
+
+  }
+
+  })
+
+
+
+
+
+
+}
+// route.post('/:id/sub',addSubCategories);
+// function addSubCategories(req, res,next){
+//   let data = req.body;
+ 
+//   if (!data.displayName) {
+//     throw new BadRequest('Missing required fields: title or desc or price');
+//   }
+
+//   categoriesCrud.create(data)
+//     .then(categoriesAdded=>{
+//       console.log('categoriesAdded',categoriesAdded)
+//       res.json(categoriesAdded);
+//     })
+//     .catch(()=>{
+//       res.status(500).send('error in the server when you add new item');
+    
+//     });
+// }
+
+route.put('/sub/:Catid',addSubCategories);
+function addSubCategories(req, res,next){
+  let id = req.params.Catid;
+  console.log('addSubCategories id',id)
+  if (!id) {
+    throw new NotFound('The id for this pagw not found');
+  }
+  let data = req.body;
+  productsCrud.update(id,data)
+    .then(updatedProduct =>{
+      res.json(updatedProduct);
+    })
+    .catch(()=>{
+      res.status(500).send('error in the server when you updateOneItem');
+    
+    });
+}
+
+route.get('/categories/:name',getByIdCategory);
+async function getByIdCategory(req, res,next){
+
+  let name = req.params.name;
+  // console.log('/categories/:name',name)
+  if (!name) {
+    throw new NotFound('The id for this pagw not found');
+  }
+  const cat = await categoriesCrud.findOne({ displayname: name })
+  
+  // db.users.find( {
+    //   _id: new ObjectId(5cb7267d7ea090083be865c6),
+    //   users: { $elemMatch: { userName: 'user1' } }
+    //  });
+  //  categoriesCrud.find
+  // categoriesCrud.get(id)
+
+
+  res.send(cat);
+  res.status(500).send('the error when you try Get the cart for one user');
+    // .then(category =>{
+    //   console.log('category in getOneCategory',category)
+    //   res.json(category);
+    // })
+    // .catch(()=>{
+    //   res.status(500).send('error in the server when you getOneCategory');
+    
+    // });
 }
 
 
