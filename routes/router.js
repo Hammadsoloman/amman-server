@@ -167,10 +167,10 @@ function getOneCategories(req, res,next){
 route.post('/categories',addCategories);
 function addCategories(req, res,next){
   let data = req.body;
-  // let sub = req.body.sub;
+  let sub = req.body.sub;
 
   console.log('data in categories',data)
-  // console.log('sub in categories',sub)
+  console.log('sub in categories',sub)
 
 
   if (!data.displayName) {
@@ -181,9 +181,7 @@ function addCategories(req, res,next){
     console.log('result in categories',result)
 
     if(!result[0]){
-    let subFirst=result[0].sub
-    subFirst.push(sub)
-    categoriesCrud.create({...data,sub:subFirst})
+    categoriesCrud.create(data)
     .then(categoriesAdded=>{
       console.log('categoriesAdded after check result',categoriesAdded)
       res.json(categoriesAdded);
