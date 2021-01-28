@@ -146,6 +146,16 @@ function getCategories(req, res,next){
     });
 } 
 
+// function getCategories(req, res, next) {
+//   let query = req.params.blog;
+//   product.searchGet({ category : query })
+//     .then(data => {
+//       console.log('in searchGet ',data);
+//       res.json(data);
+//     })
+//     .catch(err => next(err.message));
+// }
+
 route.get('/categories/:id',getOneCategories);
 function getOneCategories(req, res,next){
 
@@ -198,6 +208,7 @@ function addCategories(req, res,next){
     let subElse=result[0].sub
     console.log('id in else',id)
     console.log('subElse in else',subElse)
+    // return categoriesSchema.find({subName: subElse.subName})
     subElse.push(sub)
     categoriesCrud.update(id,{...data,sub:subElse})
     .then(updatedCategory =>{
