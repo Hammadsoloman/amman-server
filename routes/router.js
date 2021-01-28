@@ -80,7 +80,7 @@ function getAllProducts(req, res,next){
 
 
 // ,bearer
-route.get('/product/:id',bearer,getByIdProduct);
+route.get('/product/:id',getByIdProduct);
 function getByIdProduct(req, res,next){
   let id = req.params.id;
   if (!id) {
@@ -98,7 +98,7 @@ function getByIdProduct(req, res,next){
 }
 //update specific catgeroy By Id (PUT)
 // ,bearer
-route.put('/product/:id',bearer,updatedProductById);
+route.put('/product/:id',updatedProductById);
 function updatedProductById(req, res,next){
   let id = req.params.id;
   if (!id) {
@@ -117,7 +117,7 @@ function updatedProductById(req, res,next){
 }
 // delete specific catgeroy By Id (DELETE)
 // ,bearer,permissions('admin')
-route.delete('/product/:id',bearer,permissions('admin'),deleteProduct);
+route.delete('/product/:id',deleteProduct);
 function deleteProduct(req, res,next){
   let id = req.params.id;
   productsCrud.delete(id)
@@ -325,7 +325,7 @@ route.put('/select/:id',editOneProduct);
       }); 
   }
   // ,bearer,permissions('admin')
-  route.get('/selectAll',bearer,permissions('admin'),getAllProductAdmin,);
+  route.get('/selectAll',getAllProductAdmin,);
   function getAllProductAdmin(req, res, next) {
     productsCrud
       .get()
