@@ -177,7 +177,7 @@ function getOneCategories(req, res,next){
 route.post('/categories',addCategories);
 function addCategories(req, res,next){
   let data = req.body;
-  let sub = req.body.sub;
+  let subClient = req.body.subName;
 
   console.log('data in categories',data)
   console.log('sub in categories',sub)
@@ -189,9 +189,13 @@ function addCategories(req, res,next){
   return categoriesSchema.find({displayName: data.displayName})
   .then(async result=>{
     console.log('result in categories',result)
-
+    
+    // let newData={displayName: data.displayName, }
     if(!result[0]){
-    categoriesCrud.create(data)
+      let subIf=data.subName
+      console.log('subIf in else',subIf)
+      subIf.push(sub)
+    categoriesCrud.create({displayName: data.displayName,sub:subIf })
     .then(categoriesAdded=>{
       console.log('categoriesAdded after check result',categoriesAdded)
       res.json(categoriesAdded);
