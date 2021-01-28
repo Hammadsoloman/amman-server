@@ -177,10 +177,10 @@ function getOneCategories(req, res,next){
 route.post('/categories',addCategories);
 function addCategories(req, res,next){
   let data = req.body;
-  let subClient = req.body.subName;
+  // let subClient = req.body.subName;
 
   console.log('data in categories',data)
-  console.log('sub in categories',sub)
+  // console.log('sub in categories',sub)
 
 
   if (!data.displayName) {
