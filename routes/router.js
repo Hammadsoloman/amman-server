@@ -182,6 +182,12 @@ function addCategories(req, res,next){
   console.log('data in categories',data)
   // console.log('sub in categories',sub)
 
+  // displayName:""
+  // sub: [
+  //   {
+  //     subName: "subIf",
+  //   }
+  // ]
 
   if (!data.displayName) {
     throw new BadRequest('Missing required fields: title or desc or price');
@@ -193,9 +199,13 @@ function addCategories(req, res,next){
     // let newData={displayName: data.displayName, }
     if(!result[0]){
       let subIf=data.subName
-      console.log('subIf in else',subIf)
-      subIf.push(sub)
-    categoriesCrud.create({displayName: data.displayName,sub:subIf })
+      console.log('subIf in if',subIf)
+      // let sub =[{subName:subIf}]
+      
+      // console.log('sub in if',sub)
+      let newData = {displayName: data.displayName,sub:{subName:subIf}};
+      console.log('data in if',newData)
+    categoriesCrud.create(newData)
     .then(categoriesAdded=>{
       console.log('categoriesAdded after check result',categoriesAdded)
       res.json(categoriesAdded);
@@ -206,15 +216,16 @@ function addCategories(req, res,next){
     });
   }
   else{
-    console.log('else in categories')
-    
+    console.log('result[0] in else in categories',result[0])
     let id = result[0]._id
-    let subElse=result[0].sub
     console.log('id in else',id)
+    let subElse=result[0].sub
     console.log('subElse in else',subElse)
-    // return categoriesSchema.find({subName: subElse.subName})
-    subElse.push(sub)
-    categoriesCrud.update(id,{...data,sub:subElse})
+    let dataInSup=data.subName
+    console.log('dataInSup in else',dataInSup)
+    // subElse.push(dataInSup)
+    // subElse.push(sub)
+    categoriesCrud.update(id,{...data,subElse:{subName:subElse}})
     .then(updatedCategory =>{
       console.log('updatedCategory in categories',updatedCategory)
       res.json(updatedCategory);
