@@ -10,6 +10,8 @@ const productsCrud = require('../lib/models/product/product-collection');
 const categoriesCrud = require('../lib/models/categories/categories-collection');
 const categoriesSchema = require('../lib/models/categories/categories-schema');
 const cartsCrud = require('../lib/models/cart/cart-collection');
+const subCatCrud = require('../lib/models/subCategory/subCategories-collection');
+const subCatCSchema = require('../lib/models/subCategory/subCategories-schema');
 const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
 const cartSchema=require('../lib/models/cart/cart-schema')
@@ -135,9 +137,7 @@ function deleteProduct(req, res,next){
 route.get('/categories',getCategories);
 function getCategories(req, res,next){
   categoriesCrud.get()
-  
     .then(allCategories =>{
-
       res.json(allCategories);
     })
     .catch(()=>{
@@ -146,15 +146,6 @@ function getCategories(req, res,next){
     });
 } 
 
-// function getCategories(req, res, next) {
-//   let query = req.params.blog;
-//   product.searchGet({ category : query })
-//     .then(data => {
-//       console.log('in searchGet ',data);
-//       res.json(data);
-//     })
-//     .catch(err => next(err.message));
-// }
 
 route.get('/categories/:id',getOneCategories);
 function getOneCategories(req, res,next){
@@ -163,7 +154,6 @@ function getOneCategories(req, res,next){
   if (!id) {
     throw new NotFound('The id for this pagw not found');
   }
-
   categoriesCrud.get(id)
     .then(oneCategory =>{
       res.json(oneCategory);
@@ -174,77 +164,132 @@ function getOneCategories(req, res,next){
     });
 }
 
-route.post('/categories',addCategories);
-function addCategories(req, res,next){
+route.post('/categories',postCategory);
+function postCategory(req, res,next){
   let data = req.body;
-  // let subClient = req.body.subName;
-
-  console.log('data in categories',data)
-  // console.log('sub in categories',sub)
-
-  // displayName:""
-  // sub: [
-  //   {
-  //     subName: "subIf",
-  //   }
-  // ]
-
-  if (!data.displayName) {
-    throw new BadRequest('Missing required fields: title or desc or price');
-  }
-  return categoriesSchema.find({displayName: data.displayName})
-  .then(async result=>{
-    console.log('result in categories',result)
-    
-    // let newData={displayName: data.displayName, }
-    if(!result[0]){
-      let subIf=data.subName
-      console.log('subIf in if',subIf)
-      // let sub =[{subName:subIf}]
-      
-      // console.log('sub in if',sub)
-      let newData = {displayName: data.displayName,sub:{subName:subIf}};
-      console.log('data in if',newData)
-    categoriesCrud.create(newData)
-    .then(categoriesAdded=>{
-      console.log('categoriesAdded after check result',categoriesAdded)
-      res.json(categoriesAdded);
+  console.log('data in post new category',data)
+  categoriesCrud.create(data)
+    .then(categoryAdded=>{
+      console.log('categoryAdded',categoryAdded)
+      res.json(categoryAdded);
     })
     .catch(()=>{
-      res.status(500).send('error in the server when you add new Category');
+      res.status(500).send('error in the server when you add new category');
     
     });
-  }
-  else{
-    console.log('result[0] in else in categories',result[0])
-    let id = result[0]._id
-    console.log('id in else',id)
-    let subElse=result[0].sub
-    console.log('subElse in else',subElse)
-    let dataInSup=data.subName
-    console.log('dataInSup in else',dataInSup)
-    // subElse.push(dataInSup)
-    // subElse.push(sub)
-    categoriesCrud.update(id,{...data,subElse:{subName:subElse}})
-    .then(updatedCategory =>{
-      console.log('updatedCategory in categories',updatedCategory)
-      res.json(updatedCategory);
-    })
-    .catch(()=>{
-      res.status(500).send('error in the server when you updatedCategory');
-    
-    });
-
-  }
-
-  })
-
-
-
-
-
-
 }
+
+route.post('/categories/:categoryId', async (req, res) => {
+  //Find a user
+  const category = await categoriesSchema.findOne({ _id: req.params.categoryId });
+  console.log('category',category)
+  
+  // if(!itemInCart){
+   console.log('categoryId', req.params.categoryId)
+
+  //Create a product
+  const item = new subCatCSchema();
+  console.log('item',item)
+  console.log('req.body.subName',req.body.subName)
+  item.subName = req.body.subName;
+
+  item.category = category._id;
+  console.log('item.category',item.category)
+
+  console.log('category',category)
+
+  await item.save();
+ 
+
+  let foundError=""
+  // Associate user with cart
+  category.subCategory.push(item._id);
+  await category.save();
+
+  if ( !foundError )
+  res.send(item);
+else
+  res.status(500).send('the error when you try to post the category');
+
+  
+  // res.send(item);
+  // res.status(500).send('the error when you try to add item to the cart in post route');
+
+
+  // }else{
+  //   console.log('you try to add exicted item!')
+  // }
+}
+);
+
+
+
+route.get('/categories/:categoryId', async (req, res) => {
+  const category = await categoriesSchema.findOne({ _id: req.params.categoryId }).populate(
+    'subName',
+  );
+  console.log('category.subName',category.subName)
+  res.send(user.cart);
+  res.status(500).send('the error when you try Get the category.subName');
+
+});
+
+
+
+// route.post('/categories',addCategories);
+// function addCategories(req, res,next){
+//   let data = req.body;
+//   // let subClient = req.body.subName;
+
+//   console.log('data in categories',data)
+//   if (!data.displayName) {
+//     throw new BadRequest('Missing required fields: title or desc or price');
+//   }
+//   return categoriesSchema.find({displayName: data.displayName})
+//   .then(async result=>{
+//     console.log('result in categories',result)
+    
+//     // let newData={displayName: data.displayName, }
+//     if(!result[0]){
+//       let subIf=data.subName
+//       console.log('subIf in if',subIf)
+//       // let sub =[{subName:subIf}]
+      
+//       // console.log('sub in if',sub)
+//       let newData = {displayName: data.displayName,sub:{subName:subIf}};
+//       console.log('data in if',newData)
+//     categoriesCrud.create(newData)
+//     .then(categoriesAdded=>{
+//       console.log('categoriesAdded after check result',categoriesAdded)
+//       res.json(categoriesAdded);
+//     })
+//     .catch(()=>{
+//       res.status(500).send('error in the server when you add new Category');
+    
+//     });
+//   }
+//   else{
+//     console.log('result[0] in else in categories',result[0])
+//     let id = result[0]._id
+//     console.log('id in else',id)
+//     let subElse=result[0].sub
+//     console.log('subElse in else',subElse)
+//     let dataInSup=data.subName
+//     console.log('dataInSup in else',dataInSup)
+//     // subElse.push(dataInSup)
+//     // subElse.push(sub)
+//     categoriesCrud.update(id,{...data,subElse:{subName:subElse}})
+//     .then(updatedCategory =>{
+//       console.log('updatedCategory in categories',updatedCategory)
+//       res.json(updatedCategory);
+//     })
+//     .catch(()=>{
+//       res.status(500).send('error in the server when you updatedCategory');
+    
+//     });
+//   }
+//   })
+// }
 // route.post('/:id/sub',addSubCategories);
 // function addSubCategories(req, res,next){
 //   let data = req.body;
@@ -282,35 +327,35 @@ function addSubCategories(req, res,next){
     });
 }
 
-route.get('/categories/:name',getByIdCategory);
-async function getByIdCategory(req, res,next){
+// route.get('/categories/:name',getByIdCategory);
+// async function getByIdCategory(req, res,next){
 
-  let name = req.params.name;
-  // console.log('/categories/:name',name)
-  if (!name) {
-    throw new NotFound('The id for this pagw not found');
-  }
-  const cat = await categoriesCrud.findOne({ displayname: name })
+//   let name = req.params.name;
+//   // console.log('/categories/:name',name)
+//   if (!name) {
+//     throw new NotFound('The id for this pagw not found');
+//   }
+//   const cat = await categoriesCrud.findOne({ displayname: name })
   
-  // db.users.find( {
-    //   _id: new ObjectId(5cb7267d7ea090083be865c6),
-    //   users: { $elemMatch: { userName: 'user1' } }
-    //  });
-  //  categoriesCrud.find
-  // categoriesCrud.get(id)
+//   // db.users.find( {
+//     //   _id: new ObjectId(5cb7267d7ea090083be865c6),
+//     //   users: { $elemMatch: { userName: 'user1' } }
+//     //  });
+//   //  categoriesCrud.find
+//   // categoriesCrud.get(id)
 
 
-  res.send(cat);
-  res.status(500).send('the error when you try Get the cart for one user');
-    // .then(category =>{
-    //   console.log('category in getOneCategory',category)
-    //   res.json(category);
-    // })
-    // .catch(()=>{
-    //   res.status(500).send('error in the server when you getOneCategory');
+//   res.send(cat);
+//   res.status(500).send('the error when you try Get the cart for one user');
+//     // .then(category =>{
+//     //   console.log('category in getOneCategory',category)
+//     //   res.json(category);
+//     // })
+//     // .catch(()=>{
+//     //   res.status(500).send('error in the server when you getOneCategory');
     
-    // });
-}
+//     // });
+// }
 
 
 /***************************************** ADMIN CRUD METHODS ****************************************************/
