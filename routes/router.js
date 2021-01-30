@@ -180,6 +180,7 @@ function postCategory(req, res,next){
 }
 
 route.post('/categories/:categoryId', async (req, res) => {
+  console.log('id and data in the server for subCategory',req.params.categoryId,req.body)
   //Find a user
   const category = await categoriesSchema.findOne({ _id: req.params.categoryId });
   console.log('category',category)
