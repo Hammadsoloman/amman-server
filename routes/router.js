@@ -803,7 +803,36 @@ route.post("/stripe_payments",  (req, res) => {
 });
 
 
+            /****************************************REVIEWS*********************************/
+            route.post('/:id/reviews', async (req, res) => {
+              const product = await productsSchema.findById(req.params.id);
+              console.log('product in reviews ',product)
+              console.log('req.body in reviews ',req.body)
 
+              if (product) {
+                console.log('product iffff in reviews')
+
+                const review = {
+                  // name: req.body.name,
+                  rating: Number(req.body.rating),
+                  comment: req.body.comment,
+                };
+                product.reviews.push(review);
+                product.numReviews = product.reviews.length;
+                product.rating =
+                  product.reviews.reduce((a, c) => c.rating + a, 0) /
+                  product.reviews.length;
+                  console.log('product before save in reviews ',product)
+
+                const updatedProduct = await product.save();
+                res.status(201).send({
+                  data: updatedProduct.reviews[updatedProduct.reviews.length - 1],
+                  message: 'Review saved successfully.',
+                });
+              } else {
+                res.status(404).send({ message: 'Product Not Found' });
+              }
+            });
 
 /*****************************************************Auth***************************************/
 function signUp(req,res,next){
