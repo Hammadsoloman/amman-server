@@ -15,10 +15,12 @@ const subCatCSchema = require('../lib/models/subCategory/subCategories-schema');
 const userSchema = require('../lib/models/user/users-schema')
 const productsSchema=require('../lib/models/product/product-schema')
 const cartSchema=require('../lib/models/cart/cart-schema')
-const orderSchema=require('../lib/models/order/order-schema')
+// const orderSchema=require('../lib/models/order/order-schema')
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const {attachPaymentMethod} = require("../utils/utils")
 const CustomerSchema = require('../lib/models/payment/payment-schema')
+const orderSchema=require('../lib/models/order/order-schema')
+
 // var expressValidator = require('express-validator');
 // const { check, validationResult } = require('express-validator')
 // const uuidv4 = require("uuid/v4")
@@ -934,7 +936,46 @@ res.status(500).send('the error in sign in route');
  }
 }
 
+/**************************************************Order***************************** */
+route.post('/shipping', async (req, res) => {
+    // if (req.body.orderItems.length === 0) {
+    //   res.status(400).send({ message: 'Cart is empty' });
+    // } else {
+      console.log('req.body.shippingAddress',req.body.shippingAddress)
+      const order = new orderSchema({
+        // seller: req.body.orderItems[0].seller,
+        // orderItems: req.body.orderItems,
+        shippingAddress: req.body.shippingAddress,
+        // paymentMethod: req.body.paymentMethod,
+        // itemsPrice: req.body.itemsPrice,
+        // shippingPrice: req.body.shippingPrice,
+        // taxPrice: req.body.taxPrice,
+        // totalPrice: req.body.totalPrice,
+        // user: req.user._id,
+      });
+      const createdOrder = await order.save();
+      // res
+      //   .status(201)
+      //   .send({ message: 'New Order Created', order: createdOrder });
+        console.log('createdOrder',createdOrder)
 
+        let foundError = ""
+
+        if (!foundError){
+          console.log('!foundError in signin',!foundError)
+             
+          res.status(201)
+          .send({ message: 'New Order Created', order: createdOrder })
+              }else{
+                res.status(400).send('bad requist');
+              }
+  
+      // .catch(()=>{
+  
+      // });
+    }
+    );
+  // }
 /****************************************************************************************/
 
 // get all users
