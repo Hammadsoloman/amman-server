@@ -941,7 +941,7 @@ route.post('/shipping', async (req, res) => {
     // if (req.body.orderItems.length === 0) {
     //   res.status(400).send({ message: 'Cart is empty' });
     // } else {
-      console.log('req.body.shippingAddress',req.body.shippingAddress)
+      console.log('req.body',req.body)
       const order = new orderSchema({
         // seller: req.body.orderItems[0].seller,
         // orderItems: req.body.orderItems,
