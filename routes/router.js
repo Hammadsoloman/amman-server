@@ -905,7 +905,6 @@ function signIn(req,res,next){
 //     console.log('profile in post',profile)
 
 //     const user = {
-      
 //       googleId: profile.sub,
 //       name: profile.name,
 //       // firstName: profile.given_name,
@@ -943,15 +942,13 @@ route.post('/shipping', async (req, res) => {
     // } else {
       console.log('req.body',req.body)
       const order = new orderSchema({
-        // seller: req.body.orderItems[0].seller,
-        // orderItems: req.body.orderItems,
+        orderItems: req.body.orderItems,
         shippingAddress: req.body.shippingAddress,
-        // paymentMethod: req.body.paymentMethod,
-        // itemsPrice: req.body.itemsPrice,
-        // shippingPrice: req.body.shippingPrice,
-        // taxPrice: req.body.taxPrice,
-        // totalPrice: req.body.totalPrice,
-        // user: req.user._id,
+        paymentMethod: req.body.paymentMethod,
+        itemsPrice: req.body.itemsPrice,
+        shippingPrice: req.body.shippingPrice,
+        taxPrice: req.body.taxPrice,
+        totalPrice: req.body.totalPrice,
       });
       const createdOrder = await order.save();
       // res
